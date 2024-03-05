@@ -14,6 +14,10 @@ function saveFile(fileUrl, text) {
     return request.status;
 };
 
+function check(c, val, other = 'undefined') {
+     return c.id !== 'undefined' ? val : other
+}
+
 function isWhitespaceString(text) {
     return !text.replace(/\s/g, '').length
 };
@@ -21,6 +25,13 @@ function isWhitespaceString(text) {
 function randomRange(min, max) {
     return Math.random() * (max - min) + min;
 };
+
+function clearAnchors(item) {
+    item.anchors.top = undefined
+    item.anchors.bottom = undefined
+    item.anchors.right = undefined
+    item.anchors.left = undefined
+}
 
 function geopolyRegular(longitude, latitude, R, N) {
     return `geopoly_regular(

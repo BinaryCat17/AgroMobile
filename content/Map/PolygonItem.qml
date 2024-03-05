@@ -13,10 +13,6 @@ MapPolygon {
 
     property string geojsonType: "Polygon"
 
-    function setGeometry(anchorCoordinate){
-        addCoordinate(anchorCoordinate)
-    }
-
     function addGeometry(newCoordinate, changeLast){
         if (changeLast && path.length > 0)
             removeCoordinate(path[path.length-1])

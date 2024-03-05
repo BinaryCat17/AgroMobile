@@ -3,10 +3,13 @@
 
 import QtQuick 6.2
 import QtQuick.Controls
-import QtQuick.Layouts
 import QtLocation
 import QtPositioning
 import agromobile
+import "Map" as Map
+import "Database"
+import "Design"
+import "SelectedMenu"
 
 ApplicationWindow {
     id: appWindow
@@ -18,59 +21,83 @@ ApplicationWindow {
 
     property bool m_mobileOrientation: height > width;
 
-    Item {
-        id: overlay
-        parent: Overlay.overlay
-        width: parent.width
-        height: parent.height
-
-        Item {
-            anchors { fill: parent; topMargin: 30; bottomMargin: 10 * m_ratio;  leftMargin: 10 * m_ratio; rightMargin: 10 * m_ratio }
-
-            RowLayout {
-                anchors.fill: parent
-                enabled: !m_mobileOrientation
-                visible: !m_mobileOrientation
-
-                SideBar {
-                    Layout.alignment: Qt.AlignTop
-                }
-
-                SideInfo {
-                    mapComponent: map
-                    Layout.alignment:  Qt.AlignRight | Qt.AlignTop
-                }
-            }
-
-            ColumnLayout {
-                anchors.fill: parent
-                enabled: m_mobileOrientation
-                visible: m_mobileOrientation
-
-                SideBar {
-                    Layout.alignment: Qt.AlignTop
-                }
-
-                SideInfo {
-                    mapComponent: map
-                    Layout.alignment: Qt.AlignBottom
-                    Layout.preferredWidth: parent.width
-                }
-            }
+    onM_mobileOrientationChanged: function() {
+        if(m_mobileOrientation) {
+            selectedMenu.anchors.top = undefined
+            selectedMenu.anchors.bottom = overlay.bottom
+            selectedMenu.anchors.margins = 0
+        } else {
+            selectedMenu.anchors.bottom = undefined
+            selectedMenu.anchors.top = overlay.top
+            selectedMenu.anchors.margins = 20 * m_ratio
         }
     }
 
-    RowLayout {
+    Item {
+        id: overlay
+        parent: Overlay.overlay
+        width: appWindow.width
+        height: appWindow.height
+
+        CPanelSelector {
+            id: globalMenu
+            width: m_mobileOrientation ? parent.width : 500 * m_ratio
+            height: 300 * m_ratio
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.margins: m_mobileOrientation ? 0 : 20 * m_ratio
+
+            cOrientation: Qt.AlignLeft
+            cPanelRadius: m_mobileOrientation ? 0 : 10 * m_ratio
+            cPanelMargin: m_mobileOrientation ? 0 : 10 * m_ratio
+
+            cAdditionalData: ({
+                map: mapComponent,
+                stackRadius: m_mobileOrientation ? 0 : 10 * m_ratio
+            })
+
+            cPanelModel: [
+                {panel: 'GlobalMenu/TimePanel', icon: 'time.png'},
+                {panel: 'GlobalMenu/MapPanel', icon: 'map.png'},
+            ]
+            cOpenIcon: 'right.png'
+            cCloseIcon: 'left.png'
+        }
+
+        CPanelSelector {
+            id: selectedMenu
+            anchors.right: parent.right
+
+            width: m_mobileOrientation ? parent.width : 500 * m_ratio
+            height: 350 * m_ratio
+
+            cOrientation: m_mobileOrientation ? Qt.AlignBottom : Qt.AlignTop
+            cDirection: Qt.AlignTrailing
+
+            cPanelFill: m_mobileOrientation
+            cPanelMargin: m_mobileOrientation ? 0 : 10 * m_ratio
+            cPanelRadius: m_mobileOrientation ? 0 : 10 * m_ratio
+
+            cAdditionalData: ({
+                map: mapComponent,
+                stackRadius: m_mobileOrientation ? 0 : 10 * m_ratio
+            })
+
+            cPanelModel: [
+                {panel: 'SelectedMenu/InfoPanel', icon: 'info.png'},
+                {panel: 'SelectedMenu/CropsPanel', icon: 'wheat.png'},
+                {panel: 'SelectedMenu/MessagePanel'},
+            ]
+            cOpenIcon: m_mobileOrientation ? 'up.png' : 'down.png'
+            cCloseIcon: m_mobileOrientation ? 'down.png' : 'up.png'
+        }
+    }
+
+    Map.MapComponent {
+        id: mapComponent
         anchors.fill: parent
-
-        MapComponent {
-            id: map
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            database: Database {
-                id: database
-            }
+        database: Database {
+            id: database
         }
     }
 }

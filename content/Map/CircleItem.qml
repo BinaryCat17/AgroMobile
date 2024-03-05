@@ -14,12 +14,8 @@ MapCircle {
 
     property string geojsonType: "Point"
 
-    function setGeometry(anchorCoordinate) {
-        center = anchorCoordinate
-    }
-
     function addGeometry(newCoordinate, changeLast){
-        radius = center.distanceTo(newCoordinate)
+        center = newCoordinate
         return true
     }
 

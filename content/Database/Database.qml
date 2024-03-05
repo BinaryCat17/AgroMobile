@@ -1,6 +1,6 @@
 import QtQuick 6.2
 import QtQuick.LocalStorage
-import 'utils.js' as Utils
+import '../utils.js' as Utils
 
 Item {
     id: database;
@@ -97,6 +97,14 @@ Item {
         }
     }
 
+    function removePoints(tx, points) {
+        for (const i in points) {
+            var row = points[i];
+            tx.executeSql(`DELETE FROM points WHERE id = ?`, [row.id]);
+            tx.executeSql(`DELETE FROM tg WHERE t_id = ?`, [row.id]);
+        }
+    }
+
     function savePolysToList(rows, listModel) {
         for (var i = 0; i < rows.length; i++) {
             var r = rows.item(i);
@@ -127,6 +135,15 @@ Item {
                               VALUES (?, ?, ?)`, [row.id, row.desc, shape]);
         }
     }
+
+    function removePolys(tx, polys) {
+        for (const i in polys) {
+            var row = polys[i];
+            tx.executeSql(`DELETE FROM polys WHERE id = ?`, [row.id]);
+            tx.executeSql(`DELETE FROM tg WHERE t_id = ?`, [row.id]);
+        }
+    }
+
 
     Component.onCompleted: initializeDB()
 }

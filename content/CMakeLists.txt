@@ -3,29 +3,41 @@
 
 qt_add_library(content STATIC)
 
-file(GLOB_RECURSE resPng RELATIVE ${CMAKE_SOURCE_DIR}/content
-     "icons/*.png"
+file(GLOB_RECURSE resPng RELATIVE ${CMAKE_SOURCE_DIR}
+     "../resources/icons/*.png"
 )
+list(TRANSFORM resPng PREPEND ../)
 
-file(GLOB_RECURSE resSvg RELATIVE ${CMAKE_SOURCE_DIR}/content
-     "icons/*.svg"
+file(GLOB_RECURSE resSvg RELATIVE ${CMAKE_SOURCE_DIR}
+     "../resources/icons/*.svg"
 )
+list(TRANSFORM resSvg PREPEND ../)
 
 qt6_add_qml_module(content
     URI "content"
     VERSION 1.0
     RESOURCE_PREFIX "/qt/qml"
-    QML_FILES
-        App.qml
+    RESOURCES ../resources/fonts/fonts.txt utils.js Database/initialize.sql
+    RESOURCES ${resPng} ${resSvg}
 
-        Database.qml
-        MapComponent.qml
-        SideBar.qml
-        mapitems/CircleItem.qml mapitems/PolygonItem.qml
-    RESOURCES fonts/fonts.txt utils.js database/initialize.sql ${resPng} ${resSvg}
-    QML_FILES SideInfo.qml
-    QML_FILES OpenButton.qml
-    QML_FILES InfoPanel.qml
-    QML_FILES StatusPanel.qml
-    QML_FILES CText.qml
+    QML_FILES App.qml
+    QML_FILES Database/Database.qml
+    QML_FILES
+        Map/MapComponent.qml
+        Map/CircleItem.qml
+        Map/PolygonItem.qml
+    QML_FILES
+        GlobalMenu/MapPanel.qml
+        GlobalMenu/TimePanel.qml
+    QML_FILES
+        SelectedMenu/InfoPanel.qml
+        SelectedMenu/CropsPanel.qml
+        SelectedMenu/MessagePanel.qml
+    QML_FILES
+        Design/CText.qml
+        Design/CButton.qml
+        Design/CIcon.qml
+        Design/CStack.qml
+        Design/CHider.qml
+        Design/CPanelSelector.qml
 )
