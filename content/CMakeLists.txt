@@ -29,6 +29,7 @@ qt6_add_qml_module(content
     QML_FILES
         GlobalMenu/MapPanel.qml
         GlobalMenu/TimePanel.qml
+        GlobalMenu/CatalogPanel.qml
     QML_FILES
         SelectedMenu/InfoPanel.qml
         SelectedMenu/CropsPanel.qml
@@ -40,4 +41,9 @@ qt6_add_qml_module(content
         Design/CStack.qml
         Design/CHider.qml
         Design/CPanelSelector.qml
+        Design/CTable.qml
+   QML_FILES
+        Forms/FormComponent.qml
+        Forms/CatalogForm.qml
+        Forms/StringForm.qml
 )

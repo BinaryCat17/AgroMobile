@@ -6,6 +6,8 @@ Item {
     id: database;
     property var db;
 
+    Component.onCompleted: initializeDB()
+
     function initializeSQLFile(db, file) {
         var loadTables = Utils.openFile(file);
         db.transaction(function(tx) {
@@ -13,6 +15,7 @@ Item {
 
             for (var i in cmds) {
                 var cmd = cmds[i];
+
                 if (!Utils.isWhitespaceString(cmd)) {
                     tx.executeSql(cmd);
                 }
@@ -22,12 +25,7 @@ Item {
 
     function initializeDB() {
         db = LocalStorage.openDatabaseSync("QDeclarativeExampleDB", "1.0", "The Example QML SQL!", 1000000);
-        initializeSQLFile(db, "database/initialize.sql");
-
-        // db.transaction(function(tx) {
-        //     const data = Utils.generateData()
-        //     insertPoints(tx, data)
-        // });
+        initializeSQLFile(db, "Database/initialize.sql");
 
         console.log('database initialized')
     }
@@ -35,6 +33,8 @@ Item {
     function transaction(f) {
         db.transaction(f)
     }
+
+    // geo ------------------------------------------------------------------------------------------------------
 
     function polyShape(tx, polyId) {
         var rs = tx.executeSql(`SELECT tg._shape FROM tg WHERE tg.t_id = ${polyId}`)
@@ -144,6 +144,42 @@ Item {
         }
     }
 
+    // documents ----------------------------------------------------------------------------------------------------
 
-    Component.onCompleted: initializeDB()
+    function saveTableToList(rows, listModel) {
+        listModel.clear();
+
+        for (var i = 0; i < rows.length; i++) {
+            var r = rows.item(i);
+            listModel.append(r)
+        }
+    }
+
+    function getFromCatalog(tx, catalog, listModel) {
+        var query = `SELECT ${catalog}.id, ${catalog}.name FROM ${catalog}`;
+        var rs = tx.executeSql(query);
+        saveTableToList(rs.rows, listModel);
+    }
+
+    function insertInCatalog(tx, catalog, rows) {
+        for (const i in rows) {
+            var row = rows[i];
+            tx.executeSql(`INSERT INTO ${catalog} (id, name)
+                          VALUES (?, ?)`, [row.id, row.name]);
+        }
+    }
+
+    function updateCatalog(tx, rows) {
+        for (const i in rows) {
+            var row = rows[i];
+            tx.executeSql(`UPDATE ${catalog} SET name = (?)`, [row.name]);
+        }
+    }
+
+    function removeFromCatalog(tx, catalog, rows) {
+        for (const i in rows) {
+            var row = rows[i];
+            tx.executeSql(`DELETE FROM ${catalog} WHERE id = ?`, [row.id]);
+        }
+    }
 }

@@ -4,6 +4,11 @@
 -- DROP TABLE IF EXISTS tg;
 -- DROP TRIGGER IF EXISTS aftInsT1;
 -- DROP TRIGGER IF EXISTS aftInsT2;
+-- DROP TABLE IF EXISTS TypesOfPlants;
+-- DROP TABLE IF EXISTS WorkYears;
+-- DROP TABLE IF EXISTS FieldPlants;
+
+-- Geo Info;
 
 CREATE VIRTUAL TABLE IF NOT EXISTS tg USING geopoly (
     t_id -- references geopoints(id) or polys(id)
@@ -60,5 +65,23 @@ INSERT INTO tg (
         NEW.id,
         NEW.shape
      );
-END;
+END ;
 
+-- Docs info;
+
+CREATE TABLE IF NOT EXISTS TypesOfPlants (
+    id varchar(500) PRIMARY KEY,
+    name TEXT UNIQUE
+) ;
+
+CREATE TABLE IF NOT EXISTS WorkYears (
+    id varchar(500) PRIMARY KEY,
+    name TEXT UNIQUE
+) ;
+
+CREATE TABLE IF NOT EXISTS FieldPlants (
+    id varchar(500) PRIMARY KEY,
+    region varchar(500) REFERENCES polys(id),
+    workYear varchar(500) REFERENCES WorkYears(id),
+    plant varchar(500) REFERENCES TypesOfPlants(id)
+) ;

@@ -57,8 +57,9 @@ ApplicationWindow {
             })
 
             cPanelModel: [
-                {panel: 'GlobalMenu/TimePanel', icon: 'time.png'},
                 {panel: 'GlobalMenu/MapPanel', icon: 'map.png'},
+                {panel: 'GlobalMenu/TimePanel', icon: 'time.png'},
+                {panel: 'GlobalMenu/CatalogPanel', icon: 'catalog.png'},
             ]
             cOpenIcon: 'right.png'
             cCloseIcon: 'left.png'

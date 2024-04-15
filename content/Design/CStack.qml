@@ -77,7 +77,7 @@ Item {
 
                     panels[name] = {index: i, item: componentItem}
                 } else {
-                    console.log(name + " is not supported right now,S please call us later.")
+                    console.log(name + " is not supported right now, please call us later.")
                 }
             }
             root.activatePanel(root.cActivePanel)

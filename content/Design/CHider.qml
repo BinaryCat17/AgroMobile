@@ -3,9 +3,14 @@ import QtQuick
 Item {
     id: root
     property var cControlItem
+    property int cOpenHeight: 0
+    property int cOpenWidth: 0
     property bool cAnimateOpacity: true
     property bool cAnimateWidth: false
     property bool cAnimateHeight: false
+
+    height: cControlItem.height
+    width: cControlItem.width
 
     Item {
         id: empty
@@ -40,7 +45,7 @@ Item {
                 target: cAnimateWidth ? cControlItem : empty
                 properties: 'width'
                 from: 0
-                to: root.width
+                to: cOpenWidth
                 duration: 300
                 easing.type: Easing.InOutSine
             }
@@ -48,7 +53,7 @@ Item {
                 target: cAnimateHeight ? cControlItem : empty
                 properties: 'height'
                 from: 0
-                to: root.height
+                to: cOpenHeight
                 duration: 300
                 easing.type: Easing.InOutSine
             }
@@ -68,7 +73,7 @@ Item {
             NumberAnimation {
                 target: cAnimateWidth ? cControlItem : empty
                 properties: 'width'
-                from: root.width
+                from: cOpenWidth
                 to: 0
                 duration: 300
                 easing.type: Easing.InOutSine
@@ -76,12 +81,11 @@ Item {
             NumberAnimation {
                 target: cAnimateHeight ? cControlItem : empty
                 properties: 'height'
-                from: root.height
+                from: cOpenHeight
                 to: 0
                 duration: 300
                 easing.type: Easing.InOutSine
             }
        }
-
     ]
 }

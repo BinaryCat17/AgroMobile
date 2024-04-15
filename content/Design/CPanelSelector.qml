@@ -139,6 +139,7 @@ Item {
         width: stack.cWidth
         height: stack.cHeight
         cControlItem: stackRect
+        cAnimateHeight: true
 
         Item {
             id: stackRect
