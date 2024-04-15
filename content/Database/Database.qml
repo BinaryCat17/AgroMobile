@@ -155,31 +155,64 @@ Item {
         }
     }
 
-    function getFromCatalog(tx, catalog, listModel) {
-        var query = `SELECT ${catalog}.id, ${catalog}.name FROM ${catalog}`;
+    function getFromTable(tx, table, props, listModel) {
+        var propsString = ''
+        for (var p = 0; p < props.length; ++p)
+        {
+            var prop = props[p];
+            propsString += `${table}.${prop},`
+        }
+        propsString[propsString.length-1] = ' '
+
+        var query = `SELECT ${propsString} FROM ${table}`;
         var rs = tx.executeSql(query);
         saveTableToList(rs.rows, listModel);
     }
 
-    function insertInCatalog(tx, catalog, rows) {
+    function insertInTable(tx, table, props, rows) {
         for (const i in rows) {
             var row = rows[i];
-            tx.executeSql(`INSERT INTO ${catalog} (id, name)
-                          VALUES (?, ?)`, [row.id, row.name]);
+
+            var propsString = '('
+            var propsValuesString = '('
+            var propValues = []
+            for (var p = 0; p < props.length; ++p)
+            {
+                var prop = props[p];
+                propsString += (prop + ',')
+                propsValuesString += ('?,')
+                propValues.push(row[prop])
+            }
+            propsString[propsString.length-1] = ')'
+            propsValuesString[propsValuesString.length-1] = ')'
+
+            tx.executeSql(`INSERT INTO ${table} ${propsString}
+                          VALUES ${propsValuesString}`, propValues);
         }
     }
 
-    function updateCatalog(tx, rows) {
+    function updateTable(tx, table, props, rows) {
         for (const i in rows) {
             var row = rows[i];
-            tx.executeSql(`UPDATE ${catalog} SET name = (?)`, [row.name]);
+
+            var propsString = ''
+            var propValues = []
+            for (var p = 0; p < props.length; ++p)
+            {
+                var prop = props[p];
+                propValues.push(row[prop])
+                propsString += `${prop} = (?),`
+            }
+            propsString[propsString.length-1] = ' '
+
+            tx.executeSql(`UPDATE ${table} SET ${propsString} WHERE id=${row.id}`, propValues);
         }
     }
 
-    function removeFromCatalog(tx, catalog, rows) {
+    function removeFromTable(tx, table, rows) {
         for (const i in rows) {
             var row = rows[i];
-            tx.executeSql(`DELETE FROM ${catalog} WHERE id = ?`, [row.id]);
+            tx.executeSql(`DELETE FROM ${table} WHERE id = ?`, [row.id]);
         }
     }
 }
