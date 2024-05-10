@@ -9,8 +9,18 @@ Item {
     property bool cAnimateWidth: false
     property bool cAnimateHeight: false
 
-    height: cControlItem.height
-    width: cControlItem.width
+    Component.onCompleted: function() {
+        cControlItem.width = cOpenWidth
+        cControlItem.height = cOpenHeight
+    }
+
+    onCOpenWidthChanged: function() {
+        cControlItem.width = cOpenWidth
+    }
+
+    onCOpenHeightChanged: function() {
+        cControlItem.height = cOpenHeight
+    }
 
     Item {
         id: empty

@@ -1,15 +1,12 @@
-    // Copyright (C) 2021 The Qt Company Ltd.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only
-
 import QtQuick 6.2
 import QtQuick.Controls
 import QtLocation
 import QtPositioning
 import agromobile
-import "Map" as Map
-import "Database"
+
+import "Core"
 import "Design"
-import "SelectedMenu"
+import "Views"
 
 ApplicationWindow {
     id: appWindow
@@ -21,84 +18,78 @@ ApplicationWindow {
 
     property bool m_mobileOrientation: height > width;
 
-    onM_mobileOrientationChanged: function() {
-        if(m_mobileOrientation) {
-            selectedMenu.anchors.top = undefined
-            selectedMenu.anchors.bottom = overlay.bottom
-            selectedMenu.anchors.margins = 0
-        } else {
-            selectedMenu.anchors.bottom = undefined
-            selectedMenu.anchors.top = overlay.top
-            selectedMenu.anchors.margins = 20 * m_ratio
-        }
+    CDataManager {
+        id: dataManager
+        cDatabase: CDatabase {}
+    }
+
+    CViewManager {
+        id: objectViewManager
+        cComponents: [
+            {name: 'ObjectInfo', component: 'Views/CObjectInfoView'}
+        ]
+        cAdditionalData: ({
+            dataManager: dataManager,
+            infoTables: {
+                "Points": [
+                    {name: "longitude", type: "String", desc: "Долгота"},
+                    {name: "latitude", type: "String", desc: "Широта"},
+                    {name: "desc", type: "String", desc: "Описание"}],
+                "Polys": [
+                    {name: "shape", type: "String", desc: "Форма"},
+                    {name: "desc", type: "String", desc: "Описание"}]
+            }
+        })
+    }
+
+    CViewManager {
+        id: menuViewManager
+        cComponents: [
+            {name: 'Layers', component: 'Views/CMapLayersView'}
+        ]
+        cAdditionalData: ({
+            dataManager: dataManager
+        })
+    }
+
+    CMapView {
+        anchors.fill: parent
+        cDataManager: dataManager
+        cAdditionalData: ({
+            mapServers: [
+                {name: 'scheme', host: 'http://92.63.178.4:8080/tile/%z/%x/%y.png'},
+                {name: 'landsat', host: 'http://92.63.178.4:8081/tiles/landsat/%z/%x/%y.png'},
+                {name: 'sentinel-2a', host: 'http://92.63.178.4:8081/tiles/sentinel-2a/%z/%x/%y.png'}
+            ]
+        })
     }
 
     Item {
         id: overlay
-        parent: Overlay.overlay
-        width: appWindow.width
-        height: appWindow.height
-
-        CPanelSelector {
-            id: globalMenu
-            width: m_mobileOrientation ? parent.width : 500 * m_ratio
-            height: 300 * m_ratio
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.margins: m_mobileOrientation ? 0 : 20 * m_ratio
-
-            cOrientation: Qt.AlignLeft
-            cPanelRadius: m_mobileOrientation ? 0 : 10 * m_ratio
-            cPanelMargin: m_mobileOrientation ? 0 : 10 * m_ratio
-
-            cAdditionalData: ({
-                map: mapComponent,
-                stackRadius: m_mobileOrientation ? 0 : 10 * m_ratio
-            })
-
-            cPanelModel: [
-                {panel: 'GlobalMenu/MapPanel', icon: 'map.png'},
-                {panel: 'GlobalMenu/TimePanel', icon: 'time.png'},
-                {panel: 'GlobalMenu/CatalogPanel', icon: 'catalog.png'},
-            ]
-            cOpenIcon: 'right.png'
-            cCloseIcon: 'left.png'
-        }
-
-        CPanelSelector {
-            id: selectedMenu
-            anchors.right: parent.right
-
-            width: m_mobileOrientation ? parent.width : 500 * m_ratio
-            height: 350 * m_ratio
-
-            cOrientation: m_mobileOrientation ? Qt.AlignBottom : Qt.AlignTop
-            cDirection: Qt.AlignTrailing
-
-            cPanelFill: m_mobileOrientation
-            cPanelMargin: m_mobileOrientation ? 0 : 10 * m_ratio
-            cPanelRadius: m_mobileOrientation ? 0 : 10 * m_ratio
-
-            cAdditionalData: ({
-                map: mapComponent,
-                stackRadius: m_mobileOrientation ? 0 : 10 * m_ratio
-            })
-
-            cPanelModel: [
-                {panel: 'SelectedMenu/InfoPanel', icon: 'info.png'},
-                {panel: 'SelectedMenu/CropsPanel', icon: 'wheat.png'},
-                {panel: 'SelectedMenu/MessagePanel'},
-            ]
-            cOpenIcon: m_mobileOrientation ? 'up.png' : 'down.png'
-            cCloseIcon: m_mobileOrientation ? 'down.png' : 'up.png'
-        }
-    }
-
-    Map.MapComponent {
-        id: mapComponent
         anchors.fill: parent
-        database: Database {
-            id: database
+
+        CPanel {
+            width: 300 * m_ratio
+            height: 500 * m_ratio
+            anchors.left: parent.left
+            anchors.top: parent.top
+
+            cViewManager: objectViewManager
+            cInitModel: [
+                {panel: 'ObjectInfo', icon: 'info.png'}
+            ]
+        }
+
+        CPanel {
+            cAlignment: Qt.AlignRight
+            width: 300 * m_ratio
+            height: 500 * m_ratio
+            anchors.right: parent.right
+            anchors.top: parent.top
+            cViewManager: menuViewManager
+            cInitModel: [
+                {panel: 'Layers', icon: 'map.png'}
+            ]
         }
     }
 }

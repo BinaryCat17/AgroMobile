@@ -99,20 +99,20 @@ function generateUUID(){
     return uuid;
 };
 
-function generateData() {
-    return [...Array(100).keys()].map(i => {
-                return {
-                    longitude: randomRange(-180, 180),
-                    latitude : randomRange(-80, 80),
-                    desc     : `desc = ${randomRange(-1000, 1000)}`
-                }
-            });
-};
-
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
 function replaceAll(str, find, replace) {
   return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+}
+
+function dateTimeToStr(time) {
+    var locale = Qt.locale()
+    return time.toLocaleString(locale, "yyyy-MM-dd hh:mm:ss")
+}
+
+function strToDateTime(time) {
+    var locale = Qt.locale()
+    return Date.fromLocaleString(locale, time, "yyyy-MM-dd hh:mm:ss")
 }

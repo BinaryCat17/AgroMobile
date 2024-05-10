@@ -15,6 +15,8 @@ if (Qt6_VERSION VERSION_GREATER_EQUAL 6.3)
 endif()
 
 qt_add_executable(agromobileApp src/main.cpp
+    .gitignore
+    resources/config.json
 )
 
 qt_add_resources(agromobileApp "configuration"

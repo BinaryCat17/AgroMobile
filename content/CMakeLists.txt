@@ -17,33 +17,37 @@ qt6_add_qml_module(content
     URI "content"
     VERSION 1.0
     RESOURCE_PREFIX "/qt/qml"
-    RESOURCES ../resources/fonts/fonts.txt utils.js Database/initialize.sql
     RESOURCES ${resPng} ${resSvg}
-
+    RESOURCES
+        ../resources/fonts/fonts.txt
+        ../resources/database.sql
+        ../resources/config.json
+    RESOURCES
+        utils.js
     QML_FILES App.qml
-    QML_FILES Database/Database.qml
     QML_FILES
-        Map/MapComponent.qml
-        Map/CircleItem.qml
-        Map/PolygonItem.qml
-    QML_FILES
-        GlobalMenu/MapPanel.qml
-        GlobalMenu/TimePanel.qml
-        GlobalMenu/CatalogPanel.qml
-    QML_FILES
-        SelectedMenu/InfoPanel.qml
-        SelectedMenu/CropsPanel.qml
-        SelectedMenu/MessagePanel.qml
+        Core/CDatabase.qml
+        Core/CDataManager.qml
+        Core/CViewManager.qml
     QML_FILES
         Design/CText.qml
         Design/CButton.qml
         Design/CIcon.qml
-        Design/CStack.qml
         Design/CHider.qml
-        Design/CPanelSelector.qml
         Design/CTable.qml
-   QML_FILES
-        Forms/FormComponent.qml
-        Forms/CatalogForm.qml
-        Forms/StringForm.qml
+        Design/CView.qml
+        Design/CPanel.qml
+    QML_FILES
+        Forms/CCatalogForm.qml
+        Forms/CStringForm.qml
+        Forms/CPolyForm.qml
+        Forms/CCheckForm.qml
+        Forms/CInfoForm.qml
+    QML_FILES
+        Views/CMapView.qml
+        Views/CMapLayersView.qml
+        Views/CDocumentTypesView.qml
+        Views/CDocumentListView.qml
+        Views/CDocumentView.qml
+        Views/CRecordInfoView.qml
 )
