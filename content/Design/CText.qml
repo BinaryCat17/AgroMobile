@@ -7,6 +7,8 @@ Item {
     property int cWrapMode: Text.Wrap
     property int cVAlignment: Text.AlignTop
     property int cHAlignment: Text.AlignLeft
+    property var cContentWidth: text.contentWidth
+    property var cContentHeight: text.contentHeight
 
     Layout.fillWidth: true
     Layout.preferredHeight: text.contentHeight

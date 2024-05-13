@@ -15,6 +15,8 @@ Item {
 
             cViewManager.get(cActiveView).parent = root
             cViewManager.get(cActiveView).anchors.fill = root
+            cViewManager.get(cActiveView).opacity = 100
+            cViewManager.get(cActiveView).enabled = true
         }
     }
 

@@ -48,5 +48,17 @@
             {"name": "landsat", "desc": "landsat", "host": "http://92.63.178.4:8081/tiles/landsat/%z/%x/%y.png"},
             {"name": "sentinel-2a", "desc": "sentinel-2a", "host": "http://92.63.178.4:8081/tiles/sentinel-2a/%z/%x/%y.png"}]
         }
+    ],
+    "side_menu": [
+        { "name": "map", "desc": "Карты", "icon": "map.png", "children": [
+            { "name": "FieldPlants", "desc": "Посевы", "icon": "fields.png" },
+            { "name": "Regions", "desc": "Участки", "icon": "polygon.png" },
+            { "name": "Locations", "desc": "Точки", "icon": "placeholder.png" }
+        ]},
+        { "name": "catalogs", "desc": "Каталоги", "icon": "catalog.png", "children": [
+            { "name": "WorkYears", "desc": "Годы", "icon": "time.png" },
+            { "name": "PlantTypes", "desc": "Культуры", "icon": "wheat.png" },
+            { "name": "PlantVarieties", "desc": "Сорта", "icon": "nature.png" }
+        ]}
     ]
 }

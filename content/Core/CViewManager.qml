@@ -2,10 +2,10 @@ import QtQuick 6.2
 
 Item {
     id: root
+    property bool cInitialized: false
     property var cComponents: [] // [name: 'componentName', component: 'component/path' or componentId]
     property var cItems: ({})
     property var cAdditionalData
-    property bool cInitialized: false
 
     signal updated()
 
@@ -27,7 +27,9 @@ Item {
 
     function clearParents() {
         for (var item in cItems) {
-             cItems[item].parent = root
+            cItems[item].parent = root
+            cItems[item].opacity = 0
+            cItems[item].enabled = false
         }
     }
 
@@ -49,6 +51,9 @@ Item {
             } else {
                 componentItem = item.component
             }
+
+            componentItem.opacity = 0
+            componentItem.enabled = false
 
             if ('cAdditionalData' in componentItem) {
                 componentItem.cAdditionalData = root.cAdditionalData

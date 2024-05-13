@@ -29,25 +29,33 @@ qt6_add_qml_module(content
         Core/CDatabase.qml
         Core/CDataManager.qml
         Core/CViewManager.qml
+        Core/CWorkspace.qml
+        Core/CConfig.qml
     QML_FILES
         Design/CText.qml
         Design/CButton.qml
         Design/CIcon.qml
         Design/CHider.qml
-        Design/CTable.qml
         Design/CView.qml
-        Design/CPanel.qml
+        Design/CViewMenu.qml
+        Design/CHSeparator.qml
+        Design/CVSeparator.qml
     QML_FILES
         Forms/CCatalogForm.qml
         Forms/CStringForm.qml
         Forms/CPolyForm.qml
         Forms/CCheckForm.qml
-        Forms/CInfoForm.qml
+        Forms/CDateTimeForm.qml
+        Forms/CFormSelector.qml
     QML_FILES
-        Views/CMapView.qml
-        Views/CMapLayersView.qml
-        Views/CDocumentTypesView.qml
-        Views/CDocumentListView.qml
-        Views/CDocumentView.qml
-        Views/CRecordInfoView.qml
+        Views/Document/CDocumentView.qml
+        Views/Map/CMapView.qml
+        Views/Map/CMapMenu.qml
+        Views/Map/CMapInfo.qml
+        Views/Map/CMapLayers.qml
+    QML_FILES
+        Panels/CDocumentTypes.qml
+        Panels/CDocumentList.qml
+        Panels/CViewSelector.qml
+        QML_FILES Design/CHeader.qml
 )

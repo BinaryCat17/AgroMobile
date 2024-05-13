@@ -116,3 +116,8 @@ function strToDateTime(time) {
     var locale = Qt.locale()
     return Date.fromLocaleString(locale, time, "yyyy-MM-dd hh:mm:ss")
 }
+
+function isUpperCase(str) {
+    return str !== str.toLowerCase() &&
+           str === str.toUpperCase();
+}

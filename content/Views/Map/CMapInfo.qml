@@ -52,7 +52,7 @@ Item {
                 viewModel.push({desc: item['desc'], name: item['name'], component: componentPath, type: item['type']})
             }
         } else {
-            viewModel.push({desc: 'Объект не выбран', name: 'not_selected', component: 'Forms/CInfoForm'})
+            viewModel.push({desc: 'Объект не выбран', name: 'not_selected', component: 'Forms/CStringForm'})
         }
 
         repeater.model = []

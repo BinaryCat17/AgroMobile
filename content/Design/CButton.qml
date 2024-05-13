@@ -12,11 +12,13 @@ Rectangle {
     property color cSelectedHoveredColor: '#ffa216'
     property color cColor: '#ffffff'
     property color cHoveredColor: '#f0f0f0'
+    property real cOpenedWidth: 125 * m_ratio
+    property real cOpenedMargin: 0
 
     Layout.preferredWidth: 50 * m_ratio
     Layout.preferredHeight: 50 * m_ratio
     radius: 10
-    state: 'middle'
+    state: 'closed'
 
     function selectColor() {
         if(cSelected) {
@@ -62,11 +64,11 @@ Rectangle {
 
     states: [
         State {
-            name: 'left'
+            name: 'opened'
             PropertyChanges {
                 target: root
-                Layout.leftMargin: 10 * m_ratio
-                Layout.preferredWidth: 125 * m_ratio
+                Layout.leftMargin: cOpenedMargin
+                Layout.preferredWidth: cOpenedWidth
             }
             PropertyChanges {
                 target: title
@@ -74,7 +76,7 @@ Rectangle {
             }
         },
         State {
-            name: 'middle'
+            name: 'closed'
             PropertyChanges {
                 target: root
                 Layout.preferredWidth: 50 * m_ratio
@@ -88,8 +90,8 @@ Rectangle {
 
     transitions: [
         Transition {
-            from: 'middle'
-            to: 'left'
+            from: 'closed'
+            to: 'opened'
             NumberAnimation {
                 properties: 'Layout.leftMargin, Layout.preferredWidth, opacity'
                 duration: 300
@@ -97,8 +99,8 @@ Rectangle {
             }
         },
         Transition {
-            from: 'left'
-            to: 'middle'
+            from: 'closed'
+            to: 'opened'
             NumberAnimation {
                 properties: 'Layout.leftMargin, Layout.preferredWidth, opacity'
                 duration: 300

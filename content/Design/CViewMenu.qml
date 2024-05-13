@@ -28,7 +28,6 @@ Item {
     CHider {
         id: hider
         cControlItem: rect
-        cAnimateHeight: true
         cOpenWidth: cViewWidth
         cOpenHeight: cViewHeight
     }
@@ -82,7 +81,6 @@ Item {
                 CView {
                     id: view
                     anchors.fill: parent
-                    anchors.margins: 10 * m_ratio
                     cViewManager: root.cViewManager
                 }
             }

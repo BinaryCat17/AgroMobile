@@ -9,6 +9,7 @@ MapPolygon {
     opacity: 0.75
     referenceSurface: map.referenceSurface
 
+    property string cDesc: 'undefined'
     property var cInputValue: path
 
     function addGeometry(newCoordinate, changeLast){

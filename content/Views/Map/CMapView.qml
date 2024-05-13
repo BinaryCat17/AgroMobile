@@ -4,9 +4,9 @@ import QtLocation
 import QtQuick
 import QtQuick.Controls
 import Qt.labs.animation
-import '../Design'
-import '../Core'
-import '../utils.js' as Utils
+import '../../Design'
+import '../../Core'
+import '../../utils.js' as Utils
 
 Item {
     id: root
@@ -23,10 +23,10 @@ Item {
         cActiveView: 'map'
     }
 
-    property var cAdditionalData;
-    property var cDataManager: cAdditionalData.dataManager;
-    property bool cViewManagerInitialized: viewManager.cInitialized
-    property bool cDataManagerInitialized: cDataManager.cInitialized
+    property var cAdditionalData
+    property var cDataManager: cAdditionalData.dataManager
+    property var cWorkspace: cAdditionalData.workspace
+    property bool cCoreInitialized: cAdditionalData.initialized && viewManager.cInitialized
 
     property var cCenter: QtPositioning.coordinate(46.414, 41.362)
     property real cZoomLevel: 14
@@ -37,19 +37,29 @@ Item {
         return z * z * 10000000000 * (1 / (screenSize.width * screenSize.height)) / (Math.exp(z / 1.1) * m_ratio)
     }
 
-    onCDataManagerInitializedChanged: function() {
+    onCCoreInitializedChanged: function() {
         function onLayerActivated(layer, value) {
             if(layer === 'tile_servers') {
+                if('map' in viewManager.cItems) {
+                    var oldMap = viewManager.get('map')
+                    oldMap.deactivate()
+                }
+
                 viewManager.cComponents = [{
                     'name': 'map',
                     'component': mapComponent.createObject(viewManager, {cName: value.name, cHost: value.host})
                 }]
                 view.updateView()
+
+                var newMap = viewManager.get('map')
+                if (newMap !== undefined) {
+                    newMap.activate()
+                }
             }
         }
 
-        if(cDataManagerInitialized) {
-            cDataManager.layerActivated.connect(onLayerActivated)
+        if(cCoreInitialized) {
+            cWorkspace.layerActivated.connect(onLayerActivated)
         }
     }
 
