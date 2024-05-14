@@ -13,11 +13,15 @@
             ]
         },
         {
-            "name": "WorkYears"
+            "name": "WorkYears",
+            "records": [
+                { "name": "name", "type": "str", "desc": "Имя" }
+            ]
         },
         {
             "name": "PlantTypes",
             "records": [
+                { "name": "name", "type": "str", "desc": "Имя" },
                 { "name": "color", "type": "str", "desc": "Цвет" }
             ]
         },
@@ -25,6 +29,9 @@
             "name": "PlantVarieties",
             "headers": [
                 { "name": "plant_type_id", "type": "PlantTypes", "desc": "Культура" }
+            ],
+            "records": [
+                { "name": "name", "type": "str", "desc": "Имя" }
             ]
         },
         {

@@ -5,7 +5,7 @@ import agromobile
 
 import "Core"
 import "Panels"
-import "Views"
+import "Views/Document"
 import "Design"
 
 ApplicationWindow {
@@ -51,33 +51,15 @@ ApplicationWindow {
             anchors.fill: parent
             orientation: Qt.Horizontal
 
-            handle: Rectangle {
-                id: handleDelegate
-                implicitWidth: 1
-                implicitHeight: 1
-                color: 'black'
-            }
+            handle: CSplitHandler {}
 
             Item {
                 SplitView.minimumWidth: 200
                 SplitView.maximumWidth: 200
 
-                ColumnLayout {
-                    id: sideMenu
+                CDocumentTypes {
                     width: parent.width
-
-                    CHeader {
-                        width: parent.width
-                        height: 50 * m_ratio
-                        cText: 'Меню'
-                    }
-
-                    CHSeparator {}
-
-                    CDocumentTypes {
-                        width: parent.width
-                        cAdditionalData: root.cAdditionalData
-                    }
+                    cAdditionalData: root.cAdditionalData
                 }
             }
 
@@ -86,42 +68,18 @@ ApplicationWindow {
                 SplitView.minimumWidth: 300 * m_ratio
                 SplitView.maximumWidth: 600 * m_ratio
 
-                ColumnLayout {
-                    id: documentList
+                CDocumentList {
                     width: parent.width
-
-                    CHeader {
-                        width: parent.width
-                        height: 50 * m_ratio
-                        cText: 'Список документов'
-                    }
-
-                    CHSeparator {}
-
-                    CDocumentList {
-                        width: parent.width
-                        cAdditionalData: root.cAdditionalData
-                    }
+                    cAdditionalData: root.cAdditionalData
                 }
             }
 
             Item {
                 SplitView.fillWidth: true
-                ColumnLayout {
+
+                CViewSelector {
                     width: parent.width
-
-                    CHeader {
-                        width: parent.width
-                        height: 50 * m_ratio
-                        cText: 'Просмотр документов'
-                    }
-
-                    CHSeparator {}
-
-                    CViewSelector {
-                        id: documentView
-                        cAdditionalData: root.cAdditionalData
-                    }
+                    cAdditionalData: root.cAdditionalData
                 }
             }
         }

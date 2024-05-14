@@ -58,4 +58,6 @@ qt6_add_qml_module(content
         Panels/CDocumentList.qml
         Panels/CViewSelector.qml
         QML_FILES Design/CHeader.qml
+        QML_FILES Design/CSplitHandler.qml
+        QML_FILES Design/CTable.qml
 )

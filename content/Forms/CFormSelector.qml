@@ -8,7 +8,6 @@ Item {
     id: root
     height: 40 * m_ratio
     property var cType
-    property string cDesc: ''
     property var cInputValue
     property string cMode: 'read'
 
@@ -31,9 +30,14 @@ Item {
         view.cActiveView = 'view'
 
         var item = viewManager.get('view')
-        item.cDesc = cDesc
+        if ('cInputValue' in item) {
+            item.cInputValue = cInputValue
+        }
         if ('cType' in item) {
             item.cType = cType
+        }
+        if ('cMode' in item) {
+            item.cMode = cMode
         }
     }
 

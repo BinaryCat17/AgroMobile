@@ -19,6 +19,8 @@ Item {
     }
 
     CView {
+        anchors.fill: parent
         cViewManager: viewManager
+        cActiveView: 'document'
     }
 }

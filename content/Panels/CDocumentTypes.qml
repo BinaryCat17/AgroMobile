@@ -22,54 +22,69 @@ Item {
     }
 
     ColumnLayout {
-        anchors.fill: parent
+        id: sideMenu
+        width: parent.width
 
-        Repeater {
-            id: groupRepeater
+        CHeader {
+            width: parent.width
+            height: 50 * m_ratio
+            cText: 'Меню'
+        }
 
+        CHSeparator {}
+
+        Item {
             ColumnLayout {
-                id: parentLayer
-                property var cName: modelData.name
-                property var cDesc: modelData.desc
-                property var cIcon: modelData.icon
-                property var cChildren: modelData.children
+                anchors.fill: parent
 
-                CButton {
-                    cOpenedWidth: 160 * m_ratio
-                    cText: parentLayer.cDesc
-                    cIcon: parentLayer.cIcon
-                    state: 'opened'
-                }
+                Repeater {
+                    id: groupRepeater
 
-                ColumnLayout {
-                    Repeater {
-                        id: repeater
-                        model: parentLayer.cChildren
+                    ColumnLayout {
+                        id: parentLayer
+                        property var cName: modelData.name
+                        property var cDesc: modelData.desc
+                        property var cIcon: modelData.icon
+                        property var cChildren: modelData.children
 
                         CButton {
-                            id: childLayer
-                            property var cChildName: modelData.name
-                            property var cChildDesc: modelData.desc
-                            property var cChildIcon: modelData.icon
-
-                            Component.onCompleted: function() {
-                                cButtonList.push(this)
-                            }
-
-                            cOnClicked: function() {
-                                cWorkspace.cActiveDocumentType = cChildName
-                                for (var i = 0; i < cButtonList.length; ++i) {
-                                    cButtonList[i].cSelected = false
-                                }
-                                cSelected = true
-                            }
-
+                            cOpenedWidth: 160 * m_ratio
+                            cText: parentLayer.cDesc
+                            cIcon: parentLayer.cIcon
                             state: 'opened'
-                            cOpenedWidth: 140 * m_ratio
-                            cOpenedMargin: 20 * m_ratio
-                            height: 40 * m_ratio
-                            cText: childLayer.cChildDesc
-                            cIcon: cChildIcon
+                        }
+
+                        ColumnLayout {
+                            Repeater {
+                                id: repeater
+                                model: parentLayer.cChildren
+
+                                CButton {
+                                    id: childLayer
+                                    property var cChildName: modelData.name
+                                    property var cChildDesc: modelData.desc
+                                    property var cChildIcon: modelData.icon
+
+                                    Component.onCompleted: function() {
+                                        cButtonList.push(this)
+                                    }
+
+                                    cOnClicked: function() {
+                                        cWorkspace.cActiveDocumentType = cChildName
+                                        for (var i = 0; i < cButtonList.length; ++i) {
+                                            cButtonList[i].cSelected = false
+                                        }
+                                        cSelected = true
+                                    }
+
+                                    state: 'opened'
+                                    cOpenedWidth: 140 * m_ratio
+                                    cOpenedMargin: 20 * m_ratio
+                                    height: 40 * m_ratio
+                                    cText: childLayer.cChildDesc
+                                    cIcon: cChildIcon
+                                }
+                            }
                         }
                     }
                 }

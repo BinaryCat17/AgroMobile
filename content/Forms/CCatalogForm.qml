@@ -4,11 +4,10 @@ import '../Design'
 
 Item {
     id: root
-    property string cInputValue: 'uuid'
-    property string cDesc: 'undefined'
+    property var cInputValue
 
     CText {
         width: 130 * m_ratio
-        cText: cDesc
+        cText: 'kek'
     }
 }

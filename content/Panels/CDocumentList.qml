@@ -8,15 +8,31 @@ Item {
     property var cDataManager: cAdditionalData.dataManager
     property var cWorkspace: cAdditionalData.workspace
 
-    CButton {
+    ColumnLayout {
+        id: documentList
         width: parent.width
-        height: 50 * m_ratio
-        cIcon: 'add.png'
-        cText: 'Создать документ'
-        state: 'opened'
 
-        cOnClicked: function() {
-            cWorkspace.cDocumentMode = 'create'
+        CHeader {
+            width: parent.width
+            height: 50 * m_ratio
+            cText: 'Список документов'
+        }
+
+        CHSeparator {}
+
+        Item {
+            width: parent.width
+            CButton {
+                width: parent.width
+                height: 50 * m_ratio
+                cIcon: 'add.png'
+                cText: 'Создать документ'
+                state: 'opened'
+
+                cOnClicked: function() {
+                    cWorkspace.cDocumentMode = 'create'
+                }
+            }
         }
     }
 }

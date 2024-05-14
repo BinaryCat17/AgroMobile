@@ -3,27 +3,16 @@ import QtQuick.Layouts
 import '../Design'
 
 Item {
-    property string cDesc: 'undefined'
-    property string cInputValue: input.text
+    property var cInputValue: input.text
+    property string cMode: 'read'
 
-    RowLayout {
-
-        CText {
-            width: 130 * m_ratio
-            cText: cDesc
-        }
-
-        TextInput {
-            id: input
-            selectByMouse: true
-            padding: 12
-            height: 50 * m_ratio
-
-            Rectangle {
-                anchors.fill: parent
-                color: "#efefef"
-                z: -1
-            }
-        }
+    TextInput {
+        id: input
+        verticalAlignment: TextInput.AlignVCenter
+        readOnly: cMode === 'read'
+        text: cInputValue
+        selectByMouse: true
+        padding: 12
+        height: 50 * m_ratio
     }
 }

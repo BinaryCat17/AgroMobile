@@ -5,7 +5,7 @@ import '../Design'
 
 Item {
     property string cDesc: ''
-    property bool cInputValue: checkBox.checked
+    property var cInputValue: checkBox.checked
 
     RowLayout {
         CText {
