@@ -117,6 +117,11 @@ function strToDateTime(time) {
     return Date.fromLocaleString(locale, time, "yyyy-MM-dd hh:mm:ss")
 }
 
+function timeNow() {
+    var date = new Date()
+    return dateTimeToStr(date)
+}
+
 function isUpperCase(str) {
     return str !== str.toLowerCase() &&
            str === str.toUpperCase();

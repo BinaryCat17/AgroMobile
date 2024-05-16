@@ -13,30 +13,35 @@ Item {
     // data --------------------------------------------------------------------------------------------------
 
     function updateDocumentListeners(type) {
+        if (!(type in cDocumentListeners)) { return }
         for (var i = 0; i < cDocumentListeners[type].length; ++i) {
             cDocumentListeners[type][i].update()
         }
     }
 
     function updateHeaderListeners(doc_id) {
+        if (!(doc_id in cHeaderListeners)) { return }
         for (var i = 0; i < cHeaderListeners[doc_id].length; ++i) {
             cHeaderListeners[doc_id][i].update()
         }
     }
 
     function closeHeaderListeners(doc_id) {
+        if (!(doc_id in cHeaderListeners)) { return }
         for (var i = 0; i < cHeaderListeners[doc_id].length; ++i) {
             cHeaderListeners[doc_id][i].close()
         }
     }
 
     function updateRecordsListeners(doc_id) {
+        if (!(doc_id in cRecordsListeners)) { return }
         for (var i = 0; i < cRecordsListeners[doc_id].length; ++i) {
             cRecordsListeners[doc_id][i].update()
         }
     }
 
     function closeRecordsListeners(doc_id) {
+        if (!(doc_id in cRecordsListeners)) { return }
         for (var i = 0; i < cRecordsListeners[doc_id].length; ++i) {
             cRecordsListeners[doc_id][i].close()
         }
@@ -46,7 +51,7 @@ Item {
         var headers = cConfig.getDocumentHeaders(cConfig.getDocumentType(type))
         var prep = cConfig.prepareDocumentProps(headers, header_values)
         cDatabase.transaction(function(tx) {
-            cDatabase.insertInTable(tx, type + 'Documents', header_values.keys(), [prep])
+            cDatabase.insertInTable(tx, type + 'Documents', Object.keys(header_values), [prep])
         })
         updateDocumentListeners(type)
         updateHeaderListeners(header_values['id'])
@@ -56,7 +61,7 @@ Item {
         var headers = cConfig.getDocumentHeaders(cConfig.getDocumentType(type))
         var prep = cConfig.prepareDocumentProps(headers, header_values)
         cDatabase.transaction(function(tx) {
-            cDatabase.updateTable(tx, type + 'Documents', header_values.keys(), [prep])
+            cDatabase.updateTable(tx, type + 'Documents', Object.keys(header_values), [prep])
         })
         updateDocumentListeners(type)
         updateHeaderListeners(header_values['id'])
@@ -73,20 +78,20 @@ Item {
 
     function createRecord(type, doc_id, record_values) {
         var recordRow = cConfig.getDocumentRecordRow(cConfig.getDocumentType(type))
-        var prep = cConfig.prepareDocumentProps(recordRow, record_values)
         record_values['doc_id'] = doc_id
+        var prep = cConfig.prepareDocumentProps(recordRow, record_values)
         cDatabase.transaction(function(tx) {
-            cDatabase.insertInTable(tx, type + 'Records', record_values.keys(), [prep])
+            cDatabase.insertInTable(tx, type + 'Records', Object.keys(record_values), [prep])
         })
         updateRecordsListeners(doc_id)
     }
 
     function updateRecord(type, doc_id, record_values) {
         var recordRow = cConfig.getDocumentRecordRow(cConfig.getDocumentType(type))
-        var prep = cConfig.prepareDocumentProps(recordRow, record_values)
         record_values['doc_id'] = doc_id
+        var prep = cConfig.prepareDocumentProps(recordRow, record_values)
         cDatabase.transaction(function(tx) {
-            cDatabase.updateTable(tx, type + 'Records', record_values.keys(), [prep])
+            cDatabase.updateTable(tx, type + 'Records', Object.keys(record_values), [prep])
         })
         updateRecordsListeners(doc_id)
     }
@@ -103,14 +108,21 @@ Item {
     Component {
         id: documentListener
 
-        ListModel {
+        Item {
             property string cType: ''
+            property var cKeys: []
+            property var cData: []
+
+            function clear() {
+                cData = []
+            }
 
             signal updated()
+
             function update() {
-                var keys = cConfig.listDocumentPropNames(getDocumentType(cType), 'headers')
+                cKeys = cConfig.listDocumentPropNames(cConfig.getDocumentType(cType), 'headers')
                 cDatabase.transaction(function(tx) {
-                    cDatabase.getListFromTable(tx, type + 'Documents', keys, this)
+                    cDatabase.getListFromTable(tx, cType + 'Documents', cKeys, cData)
                 })
                 updated()
            }
@@ -133,15 +145,21 @@ Item {
     Component {
         id: headerListener
 
-        ListModel {
+        Item {
             property string cType
             property string cDocId
+            property var cData: []
+            property var cKeys: []
+
+            function clear() {
+                cData = []
+            }
 
             signal updated()
             function update() {
-                var keys = cConfig.listDocumentPropNames(getDocumentType(cType), 'headers')
+                cKeys = cConfig.listDocumentPropNames(cConfig.getDocumentType(cType), 'headers')
                 cDatabase.transaction(function(tx) {
-                    cDatabase.getItemFromTable(tx, type + 'Documents', keys, this, [cDatabase.filterEq('id', cDocId)])
+                    cDatabase.getItemFromTable(tx, cType + 'Documents', cKeys, cData, [cDatabase.filterEq('id', cDocId)])
                 })
                 updated()
             }
@@ -164,15 +182,23 @@ Item {
     Component {
         id: recordsListener
 
-        ListModel {
+        Item {
             property string cType: ''
             property string cDocId
+            property var cData: []
+            property var cKeys: []
+
+
+            function clear() {
+                cData = []
+            }
 
             signal updated()
             function update() {
-                var keys = cConfig.listDocumentPropNames(getDocumentType(cType), 'records')
+                cKeys = cConfig.listDocumentPropNames(cConfig.getDocumentType(cType), 'records')
                 cDatabase.transaction(function(tx) {
-                    cDatabase.getListFromTable(tx, type + 'Records', keys, this, [cDatabase.filterEq('doc_id', cDocId)])
+
+                    cDatabase.getListFromTable(tx, cType + 'Records', cKeys, cData, [cDatabase.filterEq('doc_id', cDocId)])
                 })
                 updated()
             }
@@ -183,7 +209,7 @@ Item {
                     var listener = cRecordsListeners[cDocId][i]
                     if (listener === this) {
                        cRecordsListeners[cDocId][i].destroy()
-                       cRecordsListeners[cType].splice(i, 1)
+                       cRecordsListeners[cDocId].splice(i, 1)
                        break
                     }
                 }
@@ -194,21 +220,33 @@ Item {
 
     function listDocuments(type) {
         var model = documentListener.createObject(root, {cType: type})
+        if (!(type in cDocumentListeners)) {
+            cDocumentListeners[type] = []
+        }
+
         cDocumentListeners[type].push(model)
         model.update()
         return model
     }
 
     function listDocumentHeaders(type, doc_id) {
+        if (!(doc_id in cDocumentListeners)) {
+            cHeaderListeners[doc_id] = []
+        }
+
         var model = headerListener.createObject(root, {cType: type, cDocId: doc_id})
-        cHeaderListeners[type].push(model)
+        cHeaderListeners[doc_id].push(model)
         model.update()
         return model
     }
 
     function listRecords(type, doc_id) {
+        if (!(doc_id in cDocumentListeners)) {
+            cRecordsListeners[doc_id] = []
+        }
+
         var model = recordsListener.createObject(root, {cType: type, cDocId: doc_id})
-        cRecordsListeners[type].push(model)
+        cRecordsListeners[doc_id].push(model)
         model.update()
         return model
     }

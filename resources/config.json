@@ -28,7 +28,7 @@
         {
             "name": "PlantVarieties",
             "headers": [
-                { "name": "plant_type_id", "type": "PlantTypes", "desc": "Культура" }
+                { "name": "plant_type_id", "type": "PlantsTypes", "desc": "Культура" }
             ],
             "records": [
                 { "name": "name", "type": "str", "desc": "Имя" }

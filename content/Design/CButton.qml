@@ -14,6 +14,7 @@ Rectangle {
     property color cHoveredColor: '#f0f0f0'
     property real cOpenedWidth: 125 * m_ratio
     property real cOpenedMargin: 0
+    property bool cHovered: menuMouseArea.containsMouse
 
     Layout.preferredWidth: 50 * m_ratio
     Layout.preferredHeight: 50 * m_ratio
@@ -47,6 +48,8 @@ Rectangle {
         id: menuMouseArea
         hoverEnabled: true
         anchors.fill: parent
+        propagateComposedEvents: true
+
         onClicked: {
             if (cControlItem !== undefined) {
                 if (cControlItem.state === 'close')

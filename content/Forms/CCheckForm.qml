@@ -5,6 +5,7 @@ import '../Design'
 
 Item {
     property string cDesc: ''
+    property var cSetValue
     property var cInputValue: checkBox.checked
 
     RowLayout {

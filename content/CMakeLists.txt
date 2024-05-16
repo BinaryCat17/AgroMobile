@@ -40,6 +40,9 @@ qt6_add_qml_module(content
         Design/CViewMenu.qml
         Design/CHSeparator.qml
         Design/CVSeparator.qml
+        Design/CHeader.qml
+        Design/CSplitHandler.qml
+        Design/CTable.qml
     QML_FILES
         Forms/CCatalogForm.qml
         Forms/CStringForm.qml
@@ -48,16 +51,13 @@ qt6_add_qml_module(content
         Forms/CDateTimeForm.qml
         Forms/CFormSelector.qml
     QML_FILES
-        Views/Document/CDocumentView.qml
-        Views/Map/CMapView.qml
-        Views/Map/CMapMenu.qml
-        Views/Map/CMapInfo.qml
-        Views/Map/CMapLayers.qml
-    QML_FILES
-        Panels/CDocumentTypes.qml
-        Panels/CDocumentList.qml
-        Panels/CViewSelector.qml
-        QML_FILES Design/CHeader.qml
-        QML_FILES Design/CSplitHandler.qml
-        QML_FILES Design/CTable.qml
+        Views/CDocumentView.qml
+        Views/CMapView.qml
+        Views/CMapMenu.qml
+        Views/CMapInfo.qml
+        Views/CMapLayers.qml
+        Views/CDocumentTypes.qml
+        Views/CDocumentList.qml
+        Views/CViewSelector.qml
+        QML_FILES Design/CComboBox.qml
 )

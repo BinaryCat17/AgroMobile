@@ -9,18 +9,18 @@ Item {
     CViewManager {
         id: viewManager
         cComponents: [
-            {name: 'Layers', component: 'Views/CMapLayersView'},
-            {name: 'Info', component: 'Views/CRecordInfoView'}
+            {name: 'Layers', component: 'Views/CMapLayers'},
+            //{name: 'Info', component: 'Views/CMapInfo'}
         ]
         cAdditionalData: root.cAdditionalData
     }
 
-    CPanel {
+    CViewMenu {
         anchors.fill: parent
         cAlignment: Qt.AlignRight
         cViewManager: viewManager
         cInitModel: [
-            {panel: 'Info', icon: 'info.png'},
+            //{panel: 'Info', icon: 'info.png'},
             {panel: 'Layers', icon: 'layer.png'}
         ]
     }

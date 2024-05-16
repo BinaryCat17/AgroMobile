@@ -63,22 +63,22 @@ Item {
     function getListFromTable(tx, table, props, listModel, filters = []) {
         var rs = executeGetQuery(tx, table, props, filters)
 
-        listModel.clear();
-        for (var i = 0; i < rows.length; i++) {
-            var r = rows.item(i);
+        listModel.length = 0
+        for (var i = 0; i < rs.rows.length; i++) {
+            var r = rs.rows.item(i);
 
             var valid = true
             var arr = []
             for (var j in r) {
                 if (JSON.stringify(r[j]) === 'null') {
-                    valid = false
+                    //valid = false
                 } else {
                     arr.push(r[j])
                 }
             }
 
             if (valid) {
-                listModel.append(arr)
+                listModel.push(arr)
             }
         }
     }
@@ -86,15 +86,15 @@ Item {
     function getItemFromTable(tx, table, props, itemModel, filters = []) {
         var rs = executeGetQuery(tx, table, props, filters)
 
-        itemModel.clear()
-        if (rows.length > 0) {
-            var item = rows.item(0)
+        itemModel.length = 0
+        if (rs.rows.length > 0) {
+            var item = rs.rows.item(0)
 
             for (var i = 0; i < props.length; ++i) {
-                itemModel.append(item[props[i]])
+                itemModel.push(item[props[i]])
             }
         } else {
-            console.log(`query from table ${table} is empty`)
+            //console.log(`query from table ${table} is empty`)
         }
     }
 
@@ -113,7 +113,7 @@ Item {
                 propValues.push(row[prop])
             }
             propsString = propsString.substring(0, propsString.length - 1) + ")";
-            propsValuesString[propsValuesString.length-1] = ')'
+            propsValuesString = propsValuesString.substring(0, propsValuesString.length-1) + ')'
 
             tx.executeSql(`INSERT INTO ${table} ${propsString}
                           VALUES ${propsValuesString}`, propValues);
@@ -123,7 +123,6 @@ Item {
     function updateTable(tx, table, props, rows) {
         for (const i in rows) {
             var row = rows[i];
-
             var propsString = ''
             var propValues = []
             for (var p = 0; p < props.length; ++p)
@@ -134,7 +133,9 @@ Item {
             }
             propsString = propsString.substring(0, propsString.length - 1) + " ";
 
-            tx.executeSql(`UPDATE ${table} SET ${propsString} WHERE id=${row.id}`, propValues);
+            // console.log(`UPDATE ${table} SET ${propsString} WHERE id=\"${row.id}\"`)
+            // console.log(JSON.stringify(propValues))
+            tx.executeSql(`UPDATE ${table} SET ${propsString} WHERE id=\"${row.id}\"`, propValues);
         }
     }
 
@@ -148,7 +149,7 @@ Item {
     // filters --------------------------------------------------------------------------------------------------
 
     function filterEq(id, prop) {
-        return `${prop} = ${id}`
+        return `\"${prop}\" = ${id}`
     }
 
     function filterNearestPoints(point) {

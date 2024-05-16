@@ -43,10 +43,20 @@ Item {
 
     function listDocumentPropNames(document, prop_type) {
         var result = []
-        for (var i in document[prop_type]) {
-            var item = document[prop_type][i]
-            result.push(item[name])
+
+        var props = []
+        if(prop_type === 'headers') {
+            props = getDocumentHeaders(document)
+        } else if(prop_type === 'records') {
+            props = getDocumentRecordRow(document)
         }
+
+        for (var i in props) {
+            var item = props[i]
+            result.push(item['name'])
+        }
+
+        return result
     }
 
     function prepareDocumentProps(props, values) {
@@ -55,7 +65,7 @@ Item {
         for (var i = 0; i < props.length; ++i) {
             var item = props[i]
             if (!(item.name in values)) {
-                console.log(`${document['name']} item must contain ${item_name}`)
+                console.log(`document item must contain ${item.name}`)
                 return
             }
             var value = values[item.name]
@@ -79,16 +89,23 @@ Item {
 
     function getDocumentHeaders(document) {
         var headers = [
-            {'name': 'id', 'type': 'string', 'desc': 'Идентификатор'},
-            {'name': 'name', 'type': 'string', 'desc': 'Имя'},
-            {'name': 'organization_id', 'type': 'string', 'desc': 'Организация'},
-            {'name': 'created_at', 'type': 'datetime', 'desc': 'Время создания'},
-            {'name': 'updated_at', 'type': 'datetime', 'desc': 'Время изменения'}
+            {'name': 'id', 'type': 'string', 'desc': 'Идентификатор', 'mode': 'read', 'visible': false},
+            {'name': 'name', 'type': 'string', 'desc': 'Имя', 'mode': 'write', 'visible': true},
+            {'name': 'organization_id', 'type': 'string', 'desc': 'Организация', 'mode': 'read', 'visible': true},
+            {'name': 'created_at', 'type': 'datetime', 'desc': 'Время создания', 'mode': 'read', 'visible': true},
+            {'name': 'updated_at', 'type': 'datetime', 'desc': 'Время изменения', 'mode': 'read', 'visible': true}
         ]
 
         if ('headers' in document) {
             for (var i = 0; i < document['headers'].length; ++i) {
-                headers.push(document['headers'][i])
+                var header = document['headers'][i]
+                if (!('visible' in header)) {
+                    header['visible'] = true
+                }
+                if (!('mode' in header)) {
+                    header['mode'] = 'write'
+                }
+                headers.push(header)
             }
         }
 

@@ -10,7 +10,9 @@ Item {
     property var cSelectedItem
 
     property string cActiveDocumentType
+    property string cActiveDocument
     property string cDocumentMode
+    property string cViewType: 'table'
 
     onCConfigInitializedChanged: function() {
         if (!cConfigInitialized) { return }

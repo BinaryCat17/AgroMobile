@@ -5,9 +5,10 @@ import '../Design'
 Item {
     id: root
     property var cInputValue
+    property var cSetValue
 
     CText {
         width: 130 * m_ratio
-        cText: 'kek'
+        cText: 'None'
     }
 }

@@ -8,18 +8,30 @@ Item {
 
     property int cRows: tableView.rows
     property int cColumns: tableView.columns
-    property real cContentWidth: cItemWidth * cColumns
-    property real cContentHeight: cItemHeight * cRows
 
-    property var cItemWidth
+    property var cColumnWidths: []
     property var cItemHeight
     property var cModel
+
+    function calcContentWidth() {
+        var sum = 0
+        for (var i = 0; i < cColumnWidths.length; ++i) {
+            sum += cColumnWidths[i]
+        }
+        return sum
+    }
+    property real cContentWidth: calcContentWidth()
+    property real cContentHeight: cItemHeight * cRows
+
+    function updateLayout() {
+        tableView.forceLayout()
+    }
 
     Component {
         id: itemDelegate
         Item {
-            implicitWidth: cItemWidth
             implicitHeight: cItemHeight
+            implicitWidth: 1
 
             Canvas{ //Create a canvas to draw the left vertical line of the rectangular box
                 width: 1
@@ -76,15 +88,55 @@ Item {
             }
 
             CFormSelector {
-                cInputValue: display.input
+                height: cItemHeight
+                width: parent.width
                 cType: display.type
                 cMode:  display.mode
+                z: -1
+
+                function selectColor() {
+                    if ('deleted' in display && display.deleted) {
+                        color = 'lightcoral'
+                    } else if ('saved' in display && !display.saved) {
+                        color = 'lightYellow'
+                    } else if (cMode === 'write') {
+                        color = 'lightGreen'
+                    }  else {
+                        color = 'white'
+                    }
+                }
+                color: selectColor()
+
+                Component.onCompleted: function() {
+                    if(display.input !== undefined) {
+                        cSetValue = JSON.parse(JSON.stringify(display.input))
+                    }
+                }
+
+                onCInputValueChanged: function() {
+                    var copy = JSON.parse(JSON.stringify(display))
+                    copy['input'] = cInputValue
+
+                    if (cSetValue !== '') {
+                        if (cSetValue === cInputValue) {
+                            if('saved' in display) {
+                                copy['saved'] = display.saved
+                            }
+                        } else {
+                            copy['saved'] = false
+                        }
+                    }
+
+                    display = copy
+                    selectColor()
+                }
             }
         }
     }
 
     TableView {
         id: tableView
+        columnWidthProvider: function (column) {return cColumnWidths[column] }
         width: cContentWidth
         height: cContentHeight
         interactive: false

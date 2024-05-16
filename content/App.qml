@@ -4,8 +4,7 @@ import QtQuick.Layouts
 import agromobile
 
 import "Core"
-import "Panels"
-import "Views/Document"
+import "Views"
 import "Design"
 
 ApplicationWindow {
@@ -79,6 +78,7 @@ ApplicationWindow {
 
                 CViewSelector {
                     width: parent.width
+                    height: parent.height
                     cAdditionalData: root.cAdditionalData
                 }
             }

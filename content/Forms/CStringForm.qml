@@ -3,16 +3,26 @@ import QtQuick.Layouts
 import '../Design'
 
 Item {
-    property var cInputValue: input.text
+    id: root
+    property var cSetValue
+    property var cInputValue
     property string cMode: 'read'
+
+    onCSetValueChanged: function() {
+        input.text = cSetValue
+    }
 
     TextInput {
         id: input
+        onTextChanged: function() {
+            cInputValue = text
+        }
+
         verticalAlignment: TextInput.AlignVCenter
         readOnly: cMode === 'read'
-        text: cInputValue
         selectByMouse: true
         padding: 12
         height: 50 * m_ratio
+        width: parent.width
     }
 }

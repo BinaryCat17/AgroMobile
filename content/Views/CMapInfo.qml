@@ -8,10 +8,11 @@ Item {
     id: root
     property real cOpenWidth: 300 * m_ratio
     property real cOpenHeight: 50 * repeater.model.length * m_ratio
-    property var cAdditionalData;
-    property var cDataManager: cAdditionalData.dataManager;
-    property var cInfoTables: cAdditionalData.infoTables
-    property var cSelectedItem: cDataManager.cSelectedItem
+    property var cAdditionalData
+    property bool cCoreInitialized: cAdditionalData.initialized
+    property var cDataManager: cAdditionalData.dataManager
+    property var cWorkspace: cAdditionalData.workspace
+    property var cSelectedItem: cWorkspace.cSelectedItem
 
     CViewManager {
         id: viewManager

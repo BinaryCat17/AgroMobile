@@ -23,6 +23,7 @@ Item {
 
     ColumnLayout {
         id: sideMenu
+        spacing: 0
         width: parent.width
 
         CHeader {
@@ -70,11 +71,15 @@ Item {
                                     }
 
                                     cOnClicked: function() {
-                                        cWorkspace.cActiveDocumentType = cChildName
-                                        for (var i = 0; i < cButtonList.length; ++i) {
-                                            cButtonList[i].cSelected = false
+                                        if (cWorkspace.cDocumentMode === '' || cWorkspace.cDocumentMode === 'view') {
+                                            cWorkspace.cActiveDocument = ''
+                                            cWorkspace.cDocumentMode = ''
+                                            cWorkspace.cActiveDocumentType = cChildName
+                                            for (var i = 0; i < cButtonList.length; ++i) {
+                                                cButtonList[i].cSelected = false
+                                            }
+                                            cSelected = true
                                         }
-                                        cSelected = true
                                     }
 
                                     state: 'opened'

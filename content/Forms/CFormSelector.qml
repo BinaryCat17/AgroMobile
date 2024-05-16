@@ -4,11 +4,12 @@ import '../Design'
 import '../Core'
 import '../utils.js' as Utils
 
-Item {
+Rectangle {
     id: root
     height: 40 * m_ratio
     property var cType
     property var cInputValue
+    property var cSetValue
     property string cMode: 'read'
 
     CViewManager {
@@ -30,14 +31,47 @@ Item {
         view.cActiveView = 'view'
 
         var item = viewManager.get('view')
-        if ('cInputValue' in item) {
-            item.cInputValue = cInputValue
+        if ('cSetValue' in item) {
+            item.cSetValue = cSetValue
         }
         if ('cType' in item) {
             item.cType = cType
         }
         if ('cMode' in item) {
             item.cMode = cMode
+        }
+        if ('cInputValue' in item) {
+            //cInputValue = item.cInputValue
+            item.onCInputValueChanged.connect(function(v) {
+                cInputValue = item.cInputValue
+            })
+        }
+    }
+
+    onCSetValueChanged: function() {
+        if (viewManager.cInitialized) {
+            var item = viewManager.get('view')
+            if ('cSetValue' in item) {
+                item.cSetValue = cSetValue
+            }
+        }
+    }
+
+    onCTypeChanged: function() {
+        if (viewManager.cInitialized) {
+            var item = viewManager.get('view')
+            if ('cType' in item) {
+                item.cType = cType
+            }
+        }
+    }
+
+    onCModeChanged: function() {
+        if (viewManager.cInitialized) {
+            var item = viewManager.get('view')
+            if ('cMode' in item) {
+                item.cMode = cMode
+            }
         }
     }
 

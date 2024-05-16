@@ -4,9 +4,9 @@ import QtLocation
 import QtQuick
 import QtQuick.Controls
 import Qt.labs.animation
-import '../../Design'
-import '../../Core'
-import '../../utils.js' as Utils
+import '../Design'
+import '../Core'
+import '../utils.js' as Utils
 
 Item {
     id: root
@@ -23,10 +23,17 @@ Item {
         cActiveView: 'map'
     }
 
+    CMapMenu {
+        cAdditionalData: root.cAdditionalData
+        anchors.right: parent.right
+        anchors.top: parent.top
+
+    }
+
     property var cAdditionalData
     property var cDataManager: cAdditionalData.dataManager
     property var cWorkspace: cAdditionalData.workspace
-    property bool cCoreInitialized: cAdditionalData.initialized && viewManager.cInitialized
+    property bool cCoreInitialized: cAdditionalData.initialized
 
     property var cCenter: QtPositioning.coordinate(46.414, 41.362)
     property real cZoomLevel: 14
@@ -60,6 +67,7 @@ Item {
 
         if(cCoreInitialized) {
             cWorkspace.layerActivated.connect(onLayerActivated)
+            cWorkspace.activateLayer('tile_servers', 'scheme')
         }
     }
 

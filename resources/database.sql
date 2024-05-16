@@ -1,16 +1,16 @@
 -- DROP TABLE IF EXISTS Organizations ;
 -- DROP TABLE IF EXISTS geopoly ;
--- DROP TABLE IF EXISTS LocationsDocuments ;
 -- DROP TABLE IF EXISTS LocationsRecords ;
+-- DROP TABLE IF EXISTS LocationsDocuments ;
 -- DROP TRIGGER IF EXISTS aftInsLocations ;
 -- DROP TRIGGER IF EXISTS aftDelLocations ;
--- DROP TABLE IF EXISTS RegionsDocuments ;
 -- DROP TABLE IF EXISTS RegionsRecords ;
+-- DROP TABLE IF EXISTS RegionsDocuments ;
 -- DROP TRIGGER IF EXISTS aftInsRegions ;
 -- DROP TRIGGER IF EXISTS aftDelRegions ;
 -- DROP TABLE IF EXISTS WorkYearsDocuments ;
 -- DROP TABLE IF EXISTS WorkYearsRecords ;
--- DROP TABLE IF EXISTS PlantsTypesDocuments ;
+-- DROP TABLE IF EXISTS PlantTypesDocuments ;
 -- DROP TABLE IF EXISTS PlantTypesRecords ;
 -- DROP TABLE IF EXISTS PlantVarietiesDocuments ;
 -- DROP TABLE IF EXISTS PlantVarietiesRecords ;
@@ -18,14 +18,14 @@
 -- DROP TABLE IF EXISTS FieldPlantsRecords ;
 
 
--- Base --------------------------------------------------------------------------------------------------------;
+-- Base -------------------------------------------------------------------------------------------------------- ;
 
 CREATE TABLE IF NOT EXISTS Organizations (
     id UUID PRIMARY KEY,
     name TEXT
 ) ;
 
--- Geo ---------------------------------------------------------------------------------------------------------;
+-- Geo --------------------------------------------------------------------------------------------------------- ;
 
 CREATE VIRTUAL TABLE IF NOT EXISTS tg USING geopoly (
     t_id -- references LocationsRecords(id) or RegionsRecords(id)
@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS LocationsDocuments (
     id varchar(500) PRIMARY KEY,
     name TEXT,
     created_at TEXT,
+    updated_at TEXT,
     organization_id REFERENCES Organizations(id)
 ) ;
 
@@ -83,6 +84,7 @@ CREATE TABLE IF NOT EXISTS RegionsDocuments (
     id varchar(500) PRIMARY KEY,
     name TEXT,
     created_at TEXT,
+    updated_at TEXT,
     organization_id REFERENCES Organizations(id)
 ) ;
 
@@ -112,12 +114,13 @@ BEGIN
     DELETE FROM tg WHERE t_id = OLD.id;
 END ;
 
--- Docs --------------------------------------------------------------------------------------------------------;
+-- Docs -------------------------------------------------------------------------------------------------------- ;
 
 CREATE TABLE IF NOT EXISTS WorkYearsDocuments (
     id varchar(500) PRIMARY KEY,
     name TEXT,
     created_at TEXT,
+    updated_at TEXT,
     organization_id REFERENCES Organizations(id)
 ) ;
 
@@ -127,10 +130,11 @@ CREATE TABLE IF NOT EXISTS WorkYearsRecords (
     name TEXT
 ) ;
 
-CREATE TABLE IF NOT EXISTS PlantsTypesDocuments (
+CREATE TABLE IF NOT EXISTS PlantTypesDocuments (
     id varchar(500) PRIMARY KEY,
     name TEXT,
     created_at TEXT,
+    updated_at TEXT,
     organization_id REFERENCES Organizations(id)
 ) ;
 
@@ -145,6 +149,7 @@ CREATE TABLE IF NOT EXISTS PlantVarietiesDocuments (
     id varchar(500) PRIMARY KEY,
     name TEXT,
     created_at TEXT,
+    updated_at TEXT,
     organization_id REFERENCES Organizations(id),
     plant_type_id UUID REFERENCES PlantTypesRecords(id)
 ) ;
@@ -159,8 +164,9 @@ CREATE TABLE IF NOT EXISTS FieldPlantsDocuments (
     id varchar(500) PRIMARY KEY,
     name TEXT,
     created_at TEXT,
+    updated_at TEXT,
     organization_id REFERENCES Organizations(id),
-    workYear_id REFERENCES WorkYearsRecords(id)
+    work_year_id REFERENCES WorkYearsRecords(id)
 ) ;
 
 CREATE TABLE IF NOT EXISTS FieldPlantsRecords (
