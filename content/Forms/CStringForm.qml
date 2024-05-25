@@ -4,6 +4,7 @@ import '../Design'
 
 Item {
     id: root
+    property var cAdditionalData
     property var cSetValue
     property var cInputValue
     property string cMode: 'read'

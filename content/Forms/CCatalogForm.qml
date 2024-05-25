@@ -4,11 +4,21 @@ import '../Design'
 
 Item {
     id: root
+    property var cAdditionalData
+    property var cConfig: cAdditionalData.config
     property var cInputValue
     property var cSetValue
+    property var cType
+    property var cColor
+    property string cMode: 'read'
 
-    CText {
-        width: 130 * m_ratio
-        cText: 'None'
+    CButton {
+        anchors.fill: parent
+        cColor: root.cColor
+        radius: 0
+        state: 'opened'
+        cOpenedWidth: parent.width
+        cIcon: cConfig.getSideMenuProp(cType, 'icon')
+        cText: cInputValue === undefined || cInputValue === '' ? cConfig.getSideMenuProp(cType, 'desc') : cInputValue
     }
 }

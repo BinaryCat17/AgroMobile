@@ -4,53 +4,106 @@ import '../utils.js' as Utils
 Item {
     id: root
     property var cConfig
+    property var cData
+    property var cViews
     property bool cInitialized: false
 
     Component.onCompleted: function() {
-        var cfg = Utils.openFile('resources/config.json')
-        cConfig = JSON.parse(cfg)
+        var config = Utils.openFile('resources/config.json')
+        cConfig = JSON.parse(config)
+
+        var data = Utils.openFile('resources/data.json')
+        cData = JSON.parse(data)
+
+        var views = Utils.openFile('resources/views.json')
+        cViews = JSON.parse(views)
+
         cInitialized = true
     }
 
-    // map -----------------------------------------------------------------------------------------------------
+    // config --------------------------------------------------------------------------------------------------------------------
 
-    function listMapLayers() {
+    function getMapLayers() {
         return cConfig['map_layers']
     }
 
-    // menu
-
-    function listSideMenuTabs() {
+    function getSideMenuTabs() {
         return cConfig['side_menu']
     }
 
-    // documents ------------------------------------------------------------------------------------------------
-
-    function listDocumentTypes() {
-        return cConfig['documents']
+    function getSideMenuProp(type, prop) {
+        var menu = getSideMenuTabs()
+        for (var i = 0; i < menu.length; ++i) {
+            for (var j = 0; j < menu[i].children.length; ++j) {
+                var item = menu[i].children[j]
+                if (item.name === type) {
+                    return item[prop]
+                }
+            }
+        }
+        return undefined
     }
 
-    function getDocumentType(type) {
-        for (var i in cConfig['documents']) {
-            var doc = cConfig['documents'][i]
+    // data ----------------------------------------------------------------------------------------------------------------------
+
+    function getDataTypes() {
+        return cData
+    }
+
+    function getDataType(type) {
+        for (var i in cData) {
+            var doc = cData[i]
             if(doc['name'] === type) {
                 return doc
             }
         }
-        console.log(`document ${type} is not exist`)
+        console.log(`data type ${type} is not exist`)
         return undefined
     }
 
-    function listDocumentPropNames(document, prop_type) {
-        var result = []
-
+    function getDataProps(document, prop_type) {
         var props = []
-        if(prop_type === 'headers') {
-            props = getDocumentHeaders(document)
-        } else if(prop_type === 'records') {
-            props = getDocumentRecordRow(document)
+        if (prop_type in document) {
+            for (var i = 0; i < document[prop_type].length; ++i) {
+                var prop = document[prop_type][i]
+                props.push(prop)
+            }
+        }
+        return props
+    }
+
+    function getDataProp(document, prop_type, name) {
+        var dataProps = getDataProps(document, prop_type)
+        for (var j = 0; j < dataProps.length; ++j) {
+            if (dataProps[j].name === name) {
+                return dataProps[j]
+            }
         }
 
+        var headerProps = getDataProps(document, 'headers')
+        for (var i = 0; i < headerProps.length; ++i) {
+            if (headerProps[i].name === name) {
+                return headerProps[i]
+            }
+        }
+
+        console.log(`data ${document.name} prop ${name} is not exist`)
+        return undefined
+    }
+
+    function hasDataProp(document, prop_type, name) {
+        for (var j = 0; j < dataProps.length; ++j) {
+            if (dataProps[j].name === name) {
+                return true
+            }
+        }
+        return false
+    }
+
+    function getDataPropNames(document, prop_type) {
+        var result = []
+
+        var props = getDataProps(document, prop_type)
         for (var i in props) {
             var item = props[i]
             result.push(item['name'])
@@ -59,70 +112,106 @@ Item {
         return result
     }
 
-    function prepareDocumentProps(props, values) {
+    // views ---------------------------------------------------------------------------------------------------------------
+
+    function getViewTypes() {
+        return cViews
+    }
+
+    function getViewType(type) {
+        for (var i in cViews) {
+            var doc = cViews[i]
+            if(doc['name'] === type) {
+                return doc
+            }
+        }
+        console.log(`view type ${type} is not exist`)
+        return undefined
+    }
+
+    function getViewProps(document, prop_type) {
+        var result = []
+
+        var props = document[prop_type]
+        var dataDoc = getDataType(document['table'])
+
+        for (var i = 0; i < props.length; ++i) {
+            var prop = props[i]
+            var newProp = {}
+
+            if ('name' in prop) {
+                newProp['name'] = prop['name']
+            } else if ('view' in prop) {
+                newProp['name'] = prop['view']
+            } else {
+                console.log(`view ${document.name} must contain 'name' or 'view' property`)
+            }
+
+            if ('desc' in prop) {
+                newProp['desc'] = prop['desc']
+            }
+
+            if ('write' in prop) {
+                newProp['write'] = prop['write']
+            } else {
+                newProp['write'] = false
+            }
+
+            if ('view' in prop && 'select' in prop) {
+                var selectedProp = getDataProp(dataDoc, 'records', prop['select'])
+                newProp['select'] = {'table': selectedProp.type, 'prop': prop['view'], 'prop_type': 'records'}
+
+                if ('filter' in prop) {
+                    var filterRecordsProp = getDataProp(dataDoc, 'records', prop['filter'])
+                    var filterDoc = getDataType(filterRecordsProp.type)
+
+                    if (hasDataProp(dataDoc, 'records', prop['filter'])) {
+                        newProp['filter'] = {'table': filterRecordsProp.type, 'prop': prop['filter'], 'prop_type': 'records'}
+                    } else if (hasDataProp(dataDoc, 'headers', prop['filter'])) {
+                        newProp['filter'] = {'table': filterRecordsProp.type, 'prop': prop['filter'], 'prop_type': 'headers'}
+                    } else {
+                        console.log(`filter tables ${document['table']} or ${filterRecordsProp.type} don't have property ${prop['filter']}`)
+                    }
+                }
+                newProp['prop'] = prop['select']
+                newProp['type'] = getDataProp(dataDoc, prop_type, prop['select']).type
+            } else if ('view' in prop) {
+                newProp['prop'] = prop['view']
+                newProp['type'] = getDataProp(dataDoc, prop_type, prop['view']).type
+            } else {
+                console.log(`view ${document.name} must contain 'view' property`)
+            }
+
+            result.push(newProp)
+        }
+        return result
+    }
+
+    function prepareViewProps(props, values) {
         var result = {}
 
         for (var i = 0; i < props.length; ++i) {
             var item = props[i]
-            if (!(item.name in values)) {
-                console.log(`document item must contain ${item.name}`)
+            if (!(item.prop in values)) {
+                console.log(`document item must contain ${item.prop}`)
                 return
             }
-            var value = values[item.name]
+            var value = values[item.prop]
 
             if(item.type === 'datetime') {
-                result[item.name] = Utils.dateTimeToStr(value)
+                result[item.prop] = Utils.dateTimeToStr(value)
             } else if (item.type === 'coord') {
-                result[item.name + '_longitude'] = value['longitude']
-                result[item.name + '_latitude'] = value['latitude']
+                result[item.prop + '_longitude'] = value['longitude']
+                result[item.prop + '_latitude'] = value['latitude']
             } else if (item.type === 'poly') {
                 var shapeLoop = value
                 shapeLoop.push(value.shape[0])
-                result[item.name] = JSON.stringify(shapeLoop)
+                result[item.prop] = JSON.stringify(shapeLoop)
             } else {
-                result[item.name] = value
+                result[item.prop] = value
             }
         }
 
         return result
-    }
-
-    function getDocumentHeaders(document) {
-        var headers = [
-            {'name': 'id', 'type': 'string', 'desc': 'Идентификатор', 'mode': 'read', 'visible': false},
-            {'name': 'name', 'type': 'string', 'desc': 'Имя', 'mode': 'write', 'visible': true},
-            {'name': 'organization_id', 'type': 'string', 'desc': 'Организация', 'mode': 'read', 'visible': true},
-            {'name': 'created_at', 'type': 'datetime', 'desc': 'Время создания', 'mode': 'read', 'visible': true},
-            {'name': 'updated_at', 'type': 'datetime', 'desc': 'Время изменения', 'mode': 'read', 'visible': true}
-        ]
-
-        if ('headers' in document) {
-            for (var i = 0; i < document['headers'].length; ++i) {
-                var header = document['headers'][i]
-                if (!('visible' in header)) {
-                    header['visible'] = true
-                }
-                if (!('mode' in header)) {
-                    header['mode'] = 'write'
-                }
-                headers.push(header)
-            }
-        }
-
-        return headers
-    }
-
-    function getDocumentRecordRow(document) {
-        var recordRow = [
-            {'name': 'id', 'type': 'string', 'desc': 'Идентификатор'},
-            {'name': 'doc_id', 'type': 'string', 'desc': 'Документ'}
-        ]
-
-        if ('records' in document) {
-            for (var i = 0; i < document['records'].length; ++i) {
-                recordRow.push(document['records'][i])
-            }
-        }
-        return recordRow
     }
 }

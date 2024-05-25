@@ -22,13 +22,18 @@ qt6_add_qml_module(content
         ../resources/fonts/fonts.txt
         ../resources/database.sql
         ../resources/config.json
+        ../resources/data.json
+        ../resources/views.json
+        ../resources/config.json
     RESOURCES
         utils.js
     QML_FILES App.qml
     QML_FILES
+        Layout/CViewSelector.qml
+        Layout/CDocSelector.qml
+    QML_FILES
         Core/CDatabase.qml
         Core/CDataManager.qml
-        Core/CViewManager.qml
         Core/CWorkspace.qml
         Core/CConfig.qml
     QML_FILES
@@ -42,22 +47,21 @@ qt6_add_qml_module(content
         Design/CVSeparator.qml
         Design/CHeader.qml
         Design/CSplitHandler.qml
-        Design/CTable.qml
+        Design/CComboBox.qml
     QML_FILES
         Forms/CCatalogForm.qml
         Forms/CStringForm.qml
-        Forms/CPolyForm.qml
         Forms/CCheckForm.qml
         Forms/CDateTimeForm.qml
         Forms/CFormSelector.qml
+        Forms/CTable.qml
     QML_FILES
-        Views/CDocumentView.qml
-        Views/CMapView.qml
-        Views/CMapMenu.qml
-        Views/CMapInfo.qml
-        Views/CMapLayers.qml
-        Views/CDocumentTypes.qml
-        Views/CDocumentList.qml
-        Views/CViewSelector.qml
-        QML_FILES Design/CComboBox.qml
+        Docs/CDocumentView.qml
+        Docs/CDocumentTypes.qml
+        Docs/CDocumentList.qml
+    QML_FILES
+        Maps/CMapView.qml
+        Maps/CMapInfo.qml
+        Maps/CMapLayers.qml
+        Maps/CPolyItem.qml
 )

@@ -1,0 +1,100 @@
+[
+    {
+        "name": "Locations",
+        "table": "Locations",
+        "headers": [
+            {"view": "name", "desc": "Название", "visible": true, "write": true},
+            {"view": "organization_id", "desc": "Организация", "write": false},
+            {"view": "created_at", "desc": "Время создания", "write": false},
+            {"view": "updated_at", "desc": "Время обновления", "write": false}
+        ],
+        "records": [
+            {"view": "pos", "desc": "Координата", "write": true}
+        ]
+    },
+    {
+        "name": "Regions",
+        "table": "Regions",
+        "headers": [
+            {"view": "name", "desc": "Название", "write": true},
+            {"view": "organization_id", "desc": "Организация", "write": false},
+            {"view": "created_at", "desc": "Время создания", "write": false},
+            {"view": "updated_at", "desc": "Время обновления", "write": false}
+        ],
+        "records": [
+            {"view": "shape", "desc": "Форма", "write": true}
+        ]
+    },
+    {
+        "name": "WorkYears",
+        "table": "WorkYears",
+        "headers": [
+            {"view": "name", "desc": "Название", "write": true},
+            {"view": "organization_id", "desc": "Организация", "write": false},
+            {"view": "created_at", "desc": "Время создания", "write": false},
+            {"view": "updated_at", "desc": "Время обновления", "write": false}
+        ],
+        "records": [
+            {"view": "name", "desc": "Имя", "write": true}
+        ]
+    },
+    {
+        "name": "PlantTypes",
+        "table": "PlantTypes",
+        "headers": [
+            {"view": "name", "desc": "Название", "write": true},
+            {"view": "organization_id", "desc": "Организация", "write": false},
+            {"view": "created_at", "desc": "Время создания", "write": false},
+            {"view": "updated_at", "desc": "Время обновления", "write": false}
+        ],
+        "records": [
+            {"view": "name", "desc": "Имя", "write": true},
+            {"view": "color", "desc": "Цвет", "write": true}
+        ]
+    },
+    {
+        "name": "PlantVarieties",
+        "table": "PlantVarieties",
+        "headers": [
+            {"view": "name", "desc": "Название", "write": true},
+            {"view": "organization_id", "desc": "Организация", "write": false},
+            {"view": "created_at", "desc": "Время создания", "write": false},
+            {"view": "updated_at", "desc": "Время обновления", "write": false},
+            {"name": "plant_type_name", "view": "name", "select": "plant_type_id", "desc": "Культура", "write": true}
+        ],
+        "records": [
+            {"view": "name", "desc": "Имя", "visible": true, "write": true}
+        ]
+    },
+    {
+        "name": "FieldPlants",
+        "table": "FieldPlants",
+        "headers": [
+            {"view": "name", "desc": "Название", "visible": true, "write": true},
+            {"view": "organization_id", "desc": "Организация", "write": false},
+            {"view": "created_at", "desc": "Время создания", "write": false},
+            {"view": "updated_at", "desc": "Время обновления", "write": false},
+            {"name": "work_year_name", "view": "name", "select": "work_year_id", "desc": "Рабочий год", "write": true}
+        ],
+        "records": [
+            {"name": "region_name", "view": "name", "select": "region_id", "desc": "Участок", "write": true},
+            {"name": "plant_type_name", "view": "name", "select": "plant_type_id", "desc": "Культура", "write": true},
+            {"name": "plant_variety_name", "view": "name", "select": "plant_variety_id", "filter": "plant_type_id", "desc": "Сорт", "write": true}
+        ]
+    },
+    {
+        "name": "FieldPlantsMap",
+        "table": "FieldPlants",
+        "headers": [
+            {"view": "name", "desc": "Название", "visible": true, "write": true},
+            {"name": "work_year_name", "view": "name", "select": "work_year_id", "desc": "Рабочий год", "write": true}
+        ],
+        "records": [
+            {"name": "region_name", "view": "name", "select": "region_id", "desc": "Участок", "write": true},
+            {"name": "region_shape", "view": "shape", "select": "region_id", "write": false},
+            {"name": "plant_type_name", "view": "name", "select": "plant_type_id", "desc": "Культура", "write": true},
+            {"name": "plant_variety_name", "view": "name", "select": "plant_variety_id", "filter": "plant_type_id", "desc": "Сорт", "write": true},
+            {"name": "plant_color", "view": "color", "select": "plant_type_id", "write": false}
+        ]
+    }
+]

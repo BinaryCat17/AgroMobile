@@ -4,8 +4,8 @@ import QtQuick.Layouts
 import agromobile
 
 import "Core"
-import "Views"
 import "Design"
+import "Layout"
 
 ApplicationWindow {
     id: root
@@ -46,42 +46,22 @@ ApplicationWindow {
         id: overlay
         anchors.fill: parent
 
-        SplitView {
-            anchors.fill: parent
-            orientation: Qt.Horizontal
-
-            handle: CSplitHandler {}
-
-            Item {
-                SplitView.minimumWidth: 200
-                SplitView.maximumWidth: 200
-
-                CDocumentTypes {
-                    width: parent.width
-                    cAdditionalData: root.cAdditionalData
-                }
-            }
-
-            Item {
-                id: centerItem
-                SplitView.minimumWidth: 300 * m_ratio
-                SplitView.maximumWidth: 600 * m_ratio
-
-                CDocumentList {
-                    width: parent.width
-                    cAdditionalData: root.cAdditionalData
-                }
-            }
-
-            Item {
-                SplitView.fillWidth: true
-
-                CViewSelector {
-                    width: parent.width
-                    height: parent.height
-                    cAdditionalData: root.cAdditionalData
-                }
-            }
+        CDocSelector {
+            id: docSelector
+            width: workspace.cActiveDocument === '' && workspace.cDocumentMode !== 'create' ? 200 * m_ratio : 400 * m_ratio
+            height: parent.height
+            cAdditionalData: root.cAdditionalData
         }
+
+        CVSeparator { id: sep; anchors.left: docSelector.right }
+
+        CViewSelector {
+            height: parent.height
+            anchors.left: sep.right
+            anchors.right: parent.right
+            cAdditionalData: root.cAdditionalData
+        }
+
     }
+
 }

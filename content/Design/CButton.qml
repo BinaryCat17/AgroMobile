@@ -9,23 +9,21 @@ Rectangle {
     property var cControlItem
     property var cOnClicked
     property color cSelectedColor: '#ffd89d'
-    property color cSelectedHoveredColor: '#ffa216'
+    property color cSelectedHoveredColor: cSelectedColor.darker(1.1)
     property color cColor: '#ffffff'
-    property color cHoveredColor: '#f0f0f0'
+    property color cHoveredColor: cColor.darker(1.1)
     property real cOpenedWidth: 125 * m_ratio
     property real cOpenedMargin: 0
-    property bool cHovered: menuMouseArea.containsMouse
+    property bool cHovered: hoverHandler.hovered
 
-    Layout.preferredWidth: 50 * m_ratio
-    Layout.preferredHeight: 50 * m_ratio
     radius: 10
     state: 'closed'
 
     function selectColor() {
         if(cSelected) {
-            return menuMouseArea.containsMouse ? cSelectedHoveredColor : cSelectedColor
+            return cHovered? cSelectedHoveredColor : cSelectedColor
         } else {
-            return menuMouseArea.containsMouse ? cHoveredColor : cColor
+            return cHovered ? cHoveredColor : cColor
         }
     }
 
@@ -44,11 +42,12 @@ Rectangle {
         }
     }
 
+    HoverHandler {
+        id: hoverHandler
+    }
+
     MouseArea {
-        id: menuMouseArea
-        hoverEnabled: true
         anchors.fill: parent
-        propagateComposedEvents: true
 
         onClicked: {
             if (cControlItem !== undefined) {

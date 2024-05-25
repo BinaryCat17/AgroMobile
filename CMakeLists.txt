@@ -16,7 +16,6 @@ endif()
 
 qt_add_executable(agromobileApp src/main.cpp
     .gitignore
-    resources/config.json
 )
 
 qt_add_resources(agromobileApp "configuration"

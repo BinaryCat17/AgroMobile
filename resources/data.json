@@ -1,0 +1,97 @@
+[
+    {
+        "name": "Locations",
+        "headers": [
+            {"name": "id", "type": "string"},
+            {"name": "name", "type": "string"},
+            {"name": "organization_id", "type": "string"},
+            {"name": "created_at", "type": "datetime"},
+            {"name": "updated_at", "type": "datetime"}
+        ],
+        "records": [
+            {"name": "id", "type": "string"},
+            {"name": "doc_id", "type": "string"},
+            {"name": "pos", "type": "coord"}
+        ]
+    },
+    {
+        "name": "Regions",
+        "headers": [
+            {"name": "id", "type": "string"},
+            {"name": "name", "type": "string"},
+            {"name": "organization_id", "type": "string"},
+            {"name": "created_at", "type": "datetime"},
+            {"name": "updated_at", "type": "datetime"}
+        ],
+        "records": [
+            {"name": "id", "type": "string"},
+            {"name": "doc_id", "type": "string"},
+            {"name": "shape", "type": "poly"}
+        ]
+    },
+    {
+        "name": "WorkYears",
+        "headers": [
+            {"name": "id", "type": "string"},
+            {"name": "name", "type": "string"},
+            {"name": "organization_id", "type": "string"},
+            {"name": "created_at", "type": "datetime"},
+            {"name": "updated_at", "type": "datetime"}
+        ],
+        "records": [
+            {"name": "id", "type": "string"},
+            {"name": "doc_id", "type": "string"},
+            {"name": "name", "type": "str"}
+        ]
+    },
+    {
+        "name": "PlantTypes",
+        "headers": [
+            {"name": "id", "type": "string"},
+            {"name": "name", "type": "string"},
+            {"name": "organization_id", "type": "string"},
+            {"name": "created_at", "type": "datetime"},
+            {"name": "updated_at", "type": "datetime"}
+        ],
+        "records": [
+            {"name": "id", "type": "string"},
+            {"name": "doc_id", "type": "string"},
+            {"name": "name", "type": "str"},
+            {"name": "color", "type": "str"}
+        ]
+    },
+    {
+        "name": "PlantVarieties",
+        "headers": [
+            {"name": "id", "type": "string"},
+            {"name": "name", "type": "string"},
+            {"name": "organization_id", "type": "string"},
+            {"name": "created_at", "type": "datetime"},
+            {"name": "updated_at", "type": "datetime"},
+            {"name": "plant_type_id", "type": "PlantTypes"}
+        ],
+        "records": [
+            {"name": "id", "type": "string"},
+            {"name": "doc_id", "type": "string"},
+            {"name": "name", "type": "str" }
+        ]
+    },
+    {
+        "name": "FieldPlants",
+        "headers": [
+            {"name": "id", "type": "string"},
+            {"name": "name", "type": "string"},
+            {"name": "organization_id", "type": "string"},
+            {"name": "created_at", "type": "datetime"},
+            {"name": "updated_at", "type": "datetime"},
+            { "name": "work_year_id", "type": "WorkYears"}
+        ],
+        "records": [
+            {"name": "id", "type": "string"},
+            {"name": "doc_id", "type": "string"},
+            {"name": "region_id", "type": "Regions"},
+            {"name": "plant_type_id", "type": "PlantTypes"},
+            {"name": "plant_variety_id", "type": "PlantVarieties"}
+        ]
+    }
+]

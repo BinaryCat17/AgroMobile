@@ -11,25 +11,6 @@ import '../utils.js' as Utils
 Item {
     id: root
 
-    CViewManager {
-        id: viewManager
-        cAdditionalData: ({})
-    }
-
-    CView {
-        id: view
-        anchors.fill: parent
-        cViewManager: viewManager
-        cActiveView: 'map'
-    }
-
-    CMapMenu {
-        cAdditionalData: root.cAdditionalData
-        anchors.right: parent.right
-        anchors.top: parent.top
-
-    }
-
     property var cAdditionalData
     property var cDataManager: cAdditionalData.dataManager
     property var cWorkspace: cAdditionalData.workspace
@@ -40,6 +21,26 @@ Item {
     property real cMinimumZoomLevel: 2
     property real cMaximumZoomLevel: 16
 
+    CView {
+        id: view
+        anchors.fill: parent
+        cActiveView: 'map'
+    }
+
+    CViewMenu {
+        anchors.fill: parent
+        cAlignment: Qt.AlignRight
+        cComponents: [
+            {name: 'Layers', component: 'Maps/CMapLayers'},
+            //{name: 'Info', component: 'Maps/CMapInfo'}
+        ]
+        cAdditionalData: root.cAdditionalData
+        cInitModel: [
+            //{panel: 'Info', icon: 'info.png'},
+            {panel: 'Layers', icon: 'layer.png'}
+        ]
+    }
+
     function calcRadius(z) {
         return z * z * 10000000000 * (1 / (screenSize.width * screenSize.height)) / (Math.exp(z / 1.1) * m_ratio)
     }
@@ -47,18 +48,18 @@ Item {
     onCCoreInitializedChanged: function() {
         function onLayerActivated(layer, value) {
             if(layer === 'tile_servers') {
-                if('map' in viewManager.cItems) {
-                    var oldMap = viewManager.get('map')
+                if('map' in view.cItems) {
+                    var oldMap = view.get('map')
                     oldMap.deactivate()
                 }
 
-                viewManager.cComponents = [{
+                view.cComponents = [{
                     'name': 'map',
-                    'component': mapComponent.createObject(viewManager, {cName: value.name, cHost: value.host})
+                    'component': mapComponent.createObject(view, {cName: value.name, cHost: value.host})
                 }]
                 view.updateView()
 
-                var newMap = viewManager.get('map')
+                var newMap = view.get('map')
                 if (newMap !== undefined) {
                     newMap.activate()
                 }

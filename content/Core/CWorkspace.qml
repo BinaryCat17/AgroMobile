@@ -9,15 +9,21 @@ Item {
     property var cActiveLayers: ({})
     property var cSelectedItem
 
+    property string cSelectType
     property string cActiveDocumentType
+    property string cActiveDocumentTypeIcon
+    property string cActiveDocumentTypeDesc
     property string cActiveDocument
     property string cDocumentMode
     property string cViewType: 'table'
 
+    property var cDocumentViewState: ({})
+    property var cSelectViewState: ({})
+
     onCConfigInitializedChanged: function() {
         if (!cConfigInitialized) { return }
 
-        cMapLayers = cConfig.listMapLayers()
+        cMapLayers = cConfig.getMapLayers()
         for (var i = 0; i < cMapLayers.length; ++i) {
             var layer = cMapLayers[i]
             activateLayer(layer.name, layer.children[0].name)

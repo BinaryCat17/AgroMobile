@@ -38,16 +38,22 @@ Item {
 
     // tables ----------------------------------------------------------------------------------------------------
 
-    function executeGetQuery(tx, table, props, filters = []) {
+    function executeGetQuery(tx, table, props, joins = [], filters = []) {
         var propsString = ''
         for (var p = 0; p < props.length; ++p)
         {
-            var prop = props[p];
-            propsString += `${table}.${prop},`
+            propsString += `${table}.${props[p]},`
         }
-        propsString = propsString.substring(0, propsString.length - 1) + " ";
 
-        var query = `SELECT ${propsString} FROM ${table}`;
+        var joinsString = ''
+        if (joins.length > 0) {
+            for (var j = 0; j < joins.length; ++j) {
+                joinsString += `INNER JOIN ${table} ON ${table}.${joins[j].column} = ${joins[j].table}.${joins[j].ref_column}`
+            }
+        }
+
+        propsString = propsString.substring(0, propsString.length - 1) + " ";
+        var query = `SELECT ${propsString} FROM ${table} ${joinsString}`;
 
         if (filters.length > 0) {
             query += ' WHERE '
@@ -57,11 +63,12 @@ Item {
             query += filters[filters.length - 1]
         }
 
+        //console.log(query)
         return tx.executeSql(query);
     }
 
-    function getListFromTable(tx, table, props, listModel, filters = []) {
-        var rs = executeGetQuery(tx, table, props, filters)
+    function getListFromTable(tx, table, props, listModel, joins = [], filters = []) {
+        var rs = executeGetQuery(tx, table, props, joins, filters)
 
         listModel.length = 0
         for (var i = 0; i < rs.rows.length; i++) {
@@ -105,6 +112,7 @@ Item {
             var propsString = '('
             var propsValuesString = '('
             var propValues = []
+
             for (var p = 0; p < props.length; ++p)
             {
                 var prop = props[p];

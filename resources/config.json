@@ -1,55 +1,5 @@
 {
-    "documents": [
-        {
-            "name": "Locations",
-            "records": [
-                { "name": "pos", "type": "coord", "desc": "Позиция" }
-            ]
-        },
-        {
-            "name": "Regions",
-            "records": [
-                { "name": "shape", "type": "poly", "desc": "Форма" }
-            ]
-        },
-        {
-            "name": "WorkYears",
-            "records": [
-                { "name": "name", "type": "str", "desc": "Имя" }
-            ]
-        },
-        {
-            "name": "PlantTypes",
-            "records": [
-                { "name": "name", "type": "str", "desc": "Имя" },
-                { "name": "color", "type": "str", "desc": "Цвет" }
-            ]
-        },
-        {
-            "name": "PlantVarieties",
-            "headers": [
-                { "name": "plant_type_id", "type": "PlantsTypes", "desc": "Культура" }
-            ],
-            "records": [
-                { "name": "name", "type": "str", "desc": "Имя" }
-            ]
-        },
-        {
-            "name": "FieldPlants",
-            "headers": [
-                { "name": "work_year_id", "type": "WorkYears", "desc": "Рабочий год" }
-            ],
-            "records": [
-                { "name": "region_id", "type": "Regions", "desc": "Участок" },
-                { "name": "plant_variety_id", "type": "PlantVarieties", "desc": "Сорт" }
-            ]
-        }
-    ],
     "map_layers": [
-        {"name": "regions", "desc": "Участки:", "children": [
-            {"name": "plants", "desc": "посевы" },
-            {"name": "cadastres", "desc": "кадастры"} ]
-        },
         {"name": "tile_servers", "desc": "Карты:", "children": [
             {"name": "scheme", "desc": "схема", "host": "http://92.63.178.4:8080/tile/%z/%x/%y.png"},
             {"name": "landsat", "desc": "landsat", "host": "http://92.63.178.4:8081/tiles/landsat/%z/%x/%y.png"},
@@ -57,8 +7,10 @@
         }
     ],
     "side_menu": [
+        { "name": "crops", "desc": "Севооборот", "icon": "wheat.png", "children": [
+              { "name": "FieldPlants", "desc": "Посевы", "icon": "fields.png" }
+        ]},
         { "name": "map", "desc": "Карты", "icon": "map.png", "children": [
-            { "name": "FieldPlants", "desc": "Посевы", "icon": "fields.png" },
             { "name": "Regions", "desc": "Участки", "icon": "polygon.png" },
             { "name": "Locations", "desc": "Точки", "icon": "placeholder.png" }
         ]},

@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
 import '../Core'
-import '../Forms'
 
 Item {
     id: root
+    property var cAdditionalData
 
     property int cRows: tableView.rows
     property int cColumns: tableView.columns
@@ -88,6 +88,7 @@ Item {
             }
 
             CFormSelector {
+                cAdditionalData: root.cAdditionalData
                 height: cItemHeight
                 width: parent.width
                 cType: display.type
@@ -97,7 +98,7 @@ Item {
                 function selectColor() {
                     if ('deleted' in display && display.deleted) {
                         color = 'lightcoral'
-                    } else if ('saved' in display && !display.saved) {
+                    }  else if ('saved' in display && !display.saved) {
                         color = 'lightYellow'
                     } else if (cMode === 'write') {
                         color = 'lightGreen'
@@ -114,20 +115,21 @@ Item {
                 }
 
                 onCInputValueChanged: function() {
-                    var copy = JSON.parse(JSON.stringify(display))
-                    copy['input'] = cInputValue
+                    var index = tableView.model.index(row, column)
+                    var item = tableView.model.data(index, 'display')
+                    item['input'] = cInputValue
 
                     if (cSetValue !== '') {
                         if (cSetValue === cInputValue) {
                             if('saved' in display) {
-                                copy['saved'] = display.saved
+                                item['saved'] = display.saved
                             }
                         } else {
-                            copy['saved'] = false
+                            item['saved'] = false
                         }
                     }
 
-                    display = copy
+                    display = item
                     selectColor()
                 }
             }

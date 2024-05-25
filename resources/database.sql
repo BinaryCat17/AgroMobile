@@ -17,7 +17,6 @@
 -- DROP TABLE IF EXISTS FieldPlantsDocuments ;
 -- DROP TABLE IF EXISTS FieldPlantsRecords ;
 
-
 -- Base -------------------------------------------------------------------------------------------------------- ;
 
 CREATE TABLE IF NOT EXISTS Organizations (

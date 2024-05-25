@@ -16,7 +16,7 @@ Item {
 
     onCCoreInitializedChanged: function() {
         if (!cCoreInitialized) {return}
-        cLayerModel = cConfig.listMapLayers()
+        cLayerModel = cConfig.getMapLayers()
     }
 
     function calcHeight() {

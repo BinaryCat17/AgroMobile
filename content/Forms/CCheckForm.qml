@@ -4,6 +4,7 @@ import QtQuick.Controls
 import '../Design'
 
 Item {
+    property var cAdditionalData
     property string cDesc: ''
     property var cSetValue
     property var cInputValue: checkBox.checked

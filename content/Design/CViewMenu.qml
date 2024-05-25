@@ -7,8 +7,9 @@ Item {
     id: root
 
     width: cViewWidth
-    property var cViewManager
-    property bool cViewManagerInitialized: cViewManager.cInitialized
+    property var cComponents
+    property var cAdditionalData
+    property bool cViewInitialized: view.cInitialized
     property string cActiveView: view.cActiveView
     property var cInitModel: [] // example [{icon: 'icon.png', panel: 'panelName'}]
     property var cModel: []
@@ -22,8 +23,8 @@ Item {
         }
     }
 
-    property var cViewWidth: (cViewManagerInitialized && cActiveView !== '') ? cViewManager.get(cActiveView).cOpenWidth : 0
-    property var cViewHeight: (cViewManagerInitialized && cActiveView !== '') ? cViewManager.get(cActiveView).cOpenHeight : 0
+    property var cViewWidth: (cViewInitialized && cActiveView !== '') ? view.get(cActiveView).cOpenWidth : 0
+    property var cViewHeight: (cViewInitialized && cActiveView !== '') ? view.get(cActiveView).cOpenHeight : 0
 
     CHider {
         id: hider
@@ -81,7 +82,8 @@ Item {
                 CView {
                     id: view
                     anchors.fill: parent
-                    cViewManager: root.cViewManager
+                    cComponents: root.cComponents
+                    cAdditionalData: root.cAdditionalData
                 }
             }
         }

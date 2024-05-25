@@ -7,15 +7,11 @@ import '../utils.js' as Utils
 Rectangle {
     id: root
     height: 40 * m_ratio
+    property var cAdditionalData
     property var cType
     property var cInputValue
     property var cSetValue
     property string cMode: 'read'
-
-    CViewManager {
-        id: viewManager
-        cAdditionalData: ({})
-    }
 
     Component.onCompleted: function() {
         var componentPath = ''
@@ -27,10 +23,10 @@ Rectangle {
             componentPath = 'Forms/CCatalogForm'
         }
 
-        viewManager.cComponents = [{name: 'view', component: componentPath}]
+        view.cComponents = [{name: 'view', component: componentPath}]
         view.cActiveView = 'view'
 
-        var item = viewManager.get('view')
+        var item = view.get('view')
         if ('cSetValue' in item) {
             item.cSetValue = cSetValue
         }
@@ -40,8 +36,13 @@ Rectangle {
         if ('cMode' in item) {
             item.cMode = cMode
         }
+        if ('cColor' in item) {
+            item.cColor = color
+        }
+        if ('cAdditionalData' in item) {
+            item.cAdditionalData = cAdditionalData
+        }
         if ('cInputValue' in item) {
-            //cInputValue = item.cInputValue
             item.onCInputValueChanged.connect(function(v) {
                 cInputValue = item.cInputValue
             })
@@ -49,8 +50,8 @@ Rectangle {
     }
 
     onCSetValueChanged: function() {
-        if (viewManager.cInitialized) {
-            var item = viewManager.get('view')
+        if (view.cInitialized) {
+            var item = view.get('view')
             if ('cSetValue' in item) {
                 item.cSetValue = cSetValue
             }
@@ -58,8 +59,8 @@ Rectangle {
     }
 
     onCTypeChanged: function() {
-        if (viewManager.cInitialized) {
-            var item = viewManager.get('view')
+        if (view.cInitialized) {
+            var item = view.get('view')
             if ('cType' in item) {
                 item.cType = cType
             }
@@ -67,10 +68,28 @@ Rectangle {
     }
 
     onCModeChanged: function() {
-        if (viewManager.cInitialized) {
-            var item = viewManager.get('view')
+        if (view.cInitialized) {
+            var item = view.get('view')
             if ('cMode' in item) {
                 item.cMode = cMode
+            }
+        }
+    }
+
+    onColorChanged: function() {
+        if (view.cInitialized) {
+            var item = view.get('view')
+            if ('cColor' in item) {
+                item.cColor = color
+            }
+        }
+    }
+
+    onCAdditionalDataChanged: function() {
+        if (view.cInitialized) {
+            var item = view.get('view')
+            if ('cAdditionalData' in item) {
+                item.cAdditionalData = cAdditionalData
             }
         }
     }
@@ -78,7 +97,5 @@ Rectangle {
     CView {
         id: view
         anchors.fill: parent
-        cStatic: true
-        cViewManager: viewManager
     }
 }
