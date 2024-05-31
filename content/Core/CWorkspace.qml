@@ -7,15 +7,24 @@ Item {
     property var cConfigInitialized: cConfig.cInitialized
     property var cMapLayers
     property var cActiveLayers: ({})
-    property var cSelectedItem
 
-    property string cSelectType
     property string cActiveDocumentType
     property string cActiveDocumentTypeIcon
     property string cActiveDocumentTypeDesc
     property string cActiveDocument
+
+    property string cSelectDocumentType
+    property string cSelectDocumentTypeIcon
+    property string cSelectDocumentTypeDesc
+    property string cSelectDocument
+
     property string cDocumentMode
     property string cViewType: 'table'
+
+    property var cCurrentSelectedItem
+    property string cCurrentSelectedMode
+    property string cCurrentSelectedColumn
+    property string cCurrentSelectedRow
 
     property var cDocumentViewState: ({})
     property var cSelectViewState: ({})
@@ -29,17 +38,6 @@ Item {
             activateLayer(layer.name, layer.children[0].name)
         }
         cInitialized = true
-    }
-
-    function select(name, id) {
-        var model = root.get(name).model
-        for (var j = 0; j < model.count; ++j) {
-            var listItem = model.get(j);
-            if (listItem.id === id) {
-                cSelectedItem = listItem
-                break
-            }
-        }
     }
 
     signal layerActivated(layer: string, value: variant)

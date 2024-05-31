@@ -62,6 +62,7 @@ Item {
     function updateDocument(type, header_values) {
         var headers = cConfig.getViewProps(cConfig.getViewType(type), 'headers')
         var prep = cConfig.prepareViewProps(headers, header_values)
+        prep['id'] = header_values['id']
         cDatabase.transaction(function(tx) {
             cDatabase.updateTable(tx, type + 'Documents', Object.keys(header_values), [prep])
         })
@@ -91,8 +92,9 @@ Item {
 
     function updateRecord(type, doc_id, record_values) {
         var recordRow = cConfig.getViewProps(cConfig.getViewType(type), 'records')
-        record_values['doc_id'] = doc_id
         var prep = cConfig.prepareViewProps(recordRow, record_values)
+        prep['id'] = record_values['id']
+        prep['doc_id'] = doc_id
         cDatabase.transaction(function(tx) {
             cDatabase.updateTable(tx, type + 'Records', Object.keys(record_values), [prep])
         })
@@ -132,12 +134,7 @@ Item {
 
         for (var i = 0; i < viewProps.length; ++i) {
             var propName = ''
-            if ('name' in viewProps[i]) {
-                propName = viewProps[i]['name']
-            } else {
-                propName = viewProps[i]['prop']
-            }
-
+               propName = viewProps[i]['prop']
             if(keys.indexOf(propName) < 0) {
                 keys.push(propName)
             }

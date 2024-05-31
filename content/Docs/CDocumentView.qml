@@ -13,35 +13,64 @@ Item {
     property var cConfig: cAdditionalData.config
     property var cWorkspace: cAdditionalData.workspace
 
-    property var cState
+    property var cRecordRows
+    property var cHeaderForm
+    property var cRecordsForm
     property var cDocumentMode: cWorkspace.cDocumentMode
     property var cTableModel
 
-    function updateLayout() {
-        if (cState.cHeaderForm === undefined) { return }
+    Item {
+        id: headerRowsWrapper
 
-        headersMainTable.cModel.rows = cState.cHeaderForm.slice(0, 5)
-        headersCustomTable.cModel.rows = cState.cHeaderForm.slice(5, cState.cHeaderForm.length)
-
-        var tableModelCode = `
-            import QtQuick 6.2
-            import Qt.labs.qmlmodels
-            TableModel { property var cAdditionalData; TableModelColumn { display: "index" }`
-
-        for (var j = 0; j < cState.cRecordRows.length; ++j) {
-            var recordColumn = cState.cRecordRows[j]
-            tableModelCode += `\nTableModelColumn { display: "${recordColumn.prop}" }`
+        function calcRows() {
+            rows = headersMainTable.cModel.rows.concat(headersCustomTable.cModel.rows)
         }
-        tableModelCode += '}'
-        cTableModel = Qt.createQmlObject(tableModelCode, root, 'dynamicModel')
-        cTableModel.cAdditionalData = root.cAdditionalData
 
-        cTableModel.rows = cState.cRecordsForm.rows
-        tableOverlayRepeater.model = cState.cRecordsForm.rows
-        cState.cRecordsForm = cTableModel
-        rowsTable.cModel = cTableModel
+        property var rows
+    }
 
+    function updateLayout() {
+        if (cDocumentMode === 'select' && cWorkspace.cSelectDocument === '') {
+            headersMainTable.cModel.rows = []
+            headersCustomTable.cModel.rows = []
+            if (cTableModel !== undefined) {
+                cTableModel.rows = []
+            }
+            return
+        }
 
+        if (cHeaderForm === undefined || cHeaderForm.rows === undefined) { return }
+
+        var numSlice = 4
+        if (cDocumentMode === 'create') {
+            numSlice = 100
+        }
+
+        headersMainTable.cModel.rows = cHeaderForm.rows.slice(0, numSlice)
+        headersCustomTable.cModel.rows = cHeaderForm.rows.slice(numSlice, cHeaderForm.rows.length)
+
+        if (cRecordRows !== undefined && cDocumentMode !== 'create') {
+            var tableModelCode = `
+                import QtQuick 6.2
+                import Qt.labs.qmlmodels
+                TableModel { property var cAdditionalData; TableModelColumn { display: "index" }`
+
+            for (var j = 0; j < cRecordRows.length; ++j) {
+                var recordColumn = cRecordRows[j]
+                tableModelCode += `\nTableModelColumn { display: "${recordColumn.prop}" }`
+            }
+            tableModelCode += '}'
+            cTableModel = Qt.createQmlObject(tableModelCode, root, 'dynamicModel')
+            cTableModel.cAdditionalData = root.cAdditionalData
+
+            cTableModel.rows = cRecordsForm.rows
+            tableOverlayRepeater.model = cRecordsForm.rows.slice(0, cRecordsForm.rows.length - 1)
+            cRecordsForm = cTableModel
+            rowsTable.cModel = cTableModel
+        }
+
+        cHeaderForm = headerRowsWrapper
+        cRecordsForm = cTableModel
     }
 
     Item {
@@ -58,9 +87,16 @@ Item {
             cAdditionalData: root.cAdditionalData
             width: cContentWidth
             height: cContentHeight
+            cColor: cConfig.colors('accent')
+            cTextColor: cConfig.colors('primaryText')
+            cBorderColor: cConfig.colors('border')
+
+            onFormUpdated: headerRowsWrapper.calcRows()
 
             cColumnWidths: Array(cColumns).fill(250 * m_ratio)
             cItemHeight: 50 * m_ratio
+
+            cCurrentSelectedMode: 'headers'
 
             cModel: TableModel {
                 TableModelColumn { display: "prop" }
@@ -75,9 +111,17 @@ Item {
             height: cContentHeight
             anchors.leftMargin: 50 * m_ratio
             anchors.left: headersMainTable.right
+            cColor: cConfig.colors('accent')
+            cTextColor: cConfig.colors('primaryText')
+            cBorderColor: cConfig.colors('border')
+
+            onFormUpdated: headerRowsWrapper.calcRows()
 
             cColumnWidths: Array(cColumns).fill(250 * m_ratio)
             cItemHeight: 50 * m_ratio
+
+            cCurrentSelectedMode: 'headers'
+            cCurrentSelectedBaseRowIndex: cDocumentMode === 'edit' ? 4 : 0
 
             cModel: TableModel {
                 TableModelColumn { display: "prop" }
@@ -101,6 +145,11 @@ Item {
             cItemHeight: 50 * m_ratio
             width: cContentWidth
             height: cContentHeight
+            cColor: cConfig.colors('accent')
+            cTextColor: cConfig.colors('primaryText')
+            cBorderColor: cConfig.colors('border')
+
+            cCurrentSelectedMode: 'records'
 
             onCContentWidthChanged: rowsTableWrap.width = cContentWidth
             onCContentHeightChanged: rowsTableWrap.height = cContentHeight
@@ -108,7 +157,7 @@ Item {
 
         ColumnLayout {
             id: tableOverlay
-            z: -1
+            anchors.left: rowsTable.left
             anchors.top: rowsTable.top
             anchors.topMargin: 50 * m_ratio
             spacing: 0
@@ -121,30 +170,63 @@ Item {
                     height: 50 * m_ratio
                     property var cId: modelData[0]
 
-                    MouseArea {
+                    HoverHandler {
                         id: mouseArea
-                        hoverEnabled: true
-                        width: parent.width
-                        height: parent.height
+                    }
+
+                    Rectangle {
+                        id: overlay
+                        visible: rowsTable.cRows > 0
+                        enabled: rowsTable.cRows > 0
+                        height: 50 * m_ratio
+                        width: 50 * m_ratio
+                        opacity: 10
+                        color: mouseArea.hovered ? cConfig.colors('overlay') : 'transparent'
                     }
 
                     CButton {
                         id: delButton
                         anchors.left: parent.left
                         anchors.leftMargin: rowsTable.width
-                        visible: cDocumentMode === 'edit' && (mouseArea.containsMouse || cHovered)
-                        enabled: cDocumentMode === 'edit' && (mouseArea.containsMouse|| cHovered)
+                        visible: cDocumentMode === 'edit' && (mouseArea.hovered || cHovered)
+                        enabled: cDocumentMode === 'edit' && (mouseArea.hovered|| cHovered)
                         width: 50 * m_ratio
                         height: 50 * m_ratio
                         cIcon: 'delete.png'
+                        cColor: cConfig.colors('background')
+                        cIconColor: cConfig.colors('icon')
 
                         cOnClicked: function() {
-                            var itemCopy = JSON.parse(JSON.stringify(cState.cRecordsForm.rows[index + 1]))
+                            var itemCopy = JSON.parse(JSON.stringify(cRecordsForm.rows[index + 1]))
                             for (var it in itemCopy) {
                                 itemCopy[it].deleted = true
                             }
-                            cState.cRecordsForm.rows = cState.cRecordsForm.rows.slice(0, index + 1)
-                                .concat([itemCopy], cState.cRecordsForm.rows.slice(index + 2, cState.cRecordsForm.rows.length))
+                            cRecordsForm.rows = cRecordsForm.rows.slice(0, index + 1)
+                                .concat([itemCopy], cRecordsForm.rows.slice(index + 2, cRecordsForm.rows.length))
+                        }
+                    }
+
+                    CButton {
+                        id: selectButton
+                        anchors.left: parent.left
+                        anchors.leftMargin: rowsTable.width
+                        visible: cDocumentMode === 'select' && (mouseArea.hovered || cHovered)
+                        enabled: cDocumentMode === 'select' && (mouseArea.hovered|| cHovered)
+                        width: 50 * m_ratio
+                        height: 50 * m_ratio
+                        cIcon: 'select.png'
+                        cColor: cConfig.colors('background')
+                        cIconColor: cConfig.colors('icon')
+
+                        cOnClicked: function() {
+                            cWorkspace.cCurrentSelectedItem = cRecordsForm.rows[index + 1]
+                            cWorkspace.cSelectDocument = ''
+
+                            if (cWorkspace.cActiveDocument === '') {
+                                cWorkspace.cDocumentMode = 'create'
+                            } else {
+                                cWorkspace.cDocumentMode = 'edit'
+                            }
                         }
                     }
                 }
@@ -171,14 +253,14 @@ Item {
 
             cOnClicked: function() {
                 var recordRow = {}
-                recordRow['index'] = { 'created': 'true', 'type': 'string', 'input': `${cState.cRecordsForm.rows.length}`, 'mode': 'read'}
+                recordRow['index'] = { 'created': 'true', 'type': 'string', 'input': `${cRecordsForm.rows.length}`, 'mode': 'read'}
 
-                for (var j = 0; j < cState.cRecordRows.length; ++j) {
-                    var record = cState.cRecordRows[j]
+                for (var j = 0; j < cRecordRows.length; ++j) {
+                    var record = cRecordRows[j]
                     recordRow[record.prop] = {
                         'created': 'true', 'saved': false, 'type': 'string', 'input':  '', 'mode': 'write'}
                 }
-                cState.cRecordsForm.rows = cState.cRecordsForm.rows.concat([recordRow])
+                cRecordsForm.rows = cRecordsForm.rows.concat([recordRow])
             }
         }
     }

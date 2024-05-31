@@ -6,7 +6,10 @@ Item {
     property var cConfig
     property var cData
     property var cViews
+    property var cColors
     property bool cInitialized: false
+
+    property string cActiveTheme
 
     Component.onCompleted: function() {
         var config = Utils.openFile('resources/config.json')
@@ -18,10 +21,18 @@ Item {
         var views = Utils.openFile('resources/views.json')
         cViews = JSON.parse(views)
 
+        var clrs = Utils.openFile('resources/colors.json')
+        cColors = JSON.parse(clrs)
+        cActiveTheme = cColors['active']
+
         cInitialized = true
     }
 
     // config --------------------------------------------------------------------------------------------------------------------
+
+    function colors(name) {
+        return cColors[cActiveTheme][name]
+    }
 
     function getMapLayers() {
         return cConfig['map_layers']
@@ -92,6 +103,7 @@ Item {
     }
 
     function hasDataProp(document, prop_type, name) {
+        var dataProps = getDataProps(document, prop_type)
         for (var j = 0; j < dataProps.length; ++j) {
             if (dataProps[j].name === name) {
                 return true

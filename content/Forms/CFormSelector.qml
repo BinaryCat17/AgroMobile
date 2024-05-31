@@ -12,6 +12,11 @@ Rectangle {
     property var cInputValue
     property var cSetValue
     property string cMode: 'read'
+    property color cTextColor: 'black'
+
+    property string cCurrentSelectedMode
+    property string cCurrentSelectedColumn
+    property string cCurrentSelectedRow
 
     Component.onCompleted: function() {
         var componentPath = ''
@@ -30,18 +35,43 @@ Rectangle {
         if ('cSetValue' in item) {
             item.cSetValue = cSetValue
         }
+
         if ('cType' in item) {
             item.cType = cType
         }
+
         if ('cMode' in item) {
             item.cMode = cMode
         }
+
         if ('cColor' in item) {
             item.cColor = color
         }
+
+        if ('cTextColor' in item) {
+            item.cTextColor = cTextColor
+        }
+
         if ('cAdditionalData' in item) {
             item.cAdditionalData = cAdditionalData
         }
+
+        if ('cTextColor' in item) {
+            item.cTextColor = cTextColor
+        }
+
+        if ('cCurrentSelectedMode' in item) {
+            item.cCurrentSelectedMode = cCurrentSelectedMode
+        }
+
+        if ('cCurrentSelectedRow' in item) {
+            item.cCurrentSelectedRow = cCurrentSelectedRow
+        }
+
+        if ('cCurrentSelectedColumn' in item) {
+            item.cCurrentSelectedColumn = cCurrentSelectedColumn
+        }
+
         if ('cInputValue' in item) {
             item.onCInputValueChanged.connect(function(v) {
                 cInputValue = item.cInputValue
@@ -90,6 +120,33 @@ Rectangle {
             var item = view.get('view')
             if ('cAdditionalData' in item) {
                 item.cAdditionalData = cAdditionalData
+            }
+        }
+    }
+
+    onCCurrentSelectedModeChanged: function() {
+        if (view.cInitialized) {
+            var item = view.get('view')
+            if ('cCurrentSelectedMode' in item) {
+                item.cCurrentSelectedMode = cCurrentSelectedMode
+            }
+        }
+    }
+
+    onCCurrentSelectedColumnChanged: function() {
+        if (view.cInitialized) {
+            var item = view.get('view')
+            if ('cCurrentSelectedColumn' in item) {
+                item.cCurrentSelectedColumn = cCurrentSelectedColumn
+            }
+        }
+    }
+
+    onCCurrentSelectedRowChanged: function() {
+        if (view.cInitialized) {
+            var item = view.get('view')
+            if ('cCurrentSelectedRow' in item) {
+                item.cCurrentSelectedRow = cCurrentSelectedRow
             }
         }
     }

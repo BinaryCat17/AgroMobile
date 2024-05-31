@@ -40,6 +40,9 @@ Item {
                     cText: parentLayer.cDesc
                     cIcon: parentLayer.cIcon
                     state: 'opened'
+                    cColor: cConfig.colors('background')
+                    cIconColor: cConfig.colors('primaryText')
+                    cTextColor: cConfig.colors('primaryText')
 
                     cOnClicked: function() {
                         for (var i = 0; i < cButtonList.length; ++i) {
@@ -78,6 +81,10 @@ Item {
 
                             cText: childLayer.cChildDesc
                             cIcon: cChildIcon
+                            cColor: cConfig.colors('accent')
+                            cTextColor: cConfig.colors('primaryText')
+                            cIconColor: cConfig.colors('primaryText')
+                            cSelectedColor: cConfig.colors('selected')
 
                             Component.onCompleted: function() {
                                 cButtonList.push(this)
@@ -93,8 +100,6 @@ Item {
                                     cSelected = true
 
                                     cWorkspace.cActiveDocumentType = cChildName
-                                    cWorkspace.cActiveDocumentTypeIcon = modelData.icon
-                                    cWorkspace.cActiveDocumentTypeDesc = modelData.desc
                                 }
                             }
                         }

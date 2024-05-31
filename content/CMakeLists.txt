@@ -25,6 +25,7 @@ qt6_add_qml_module(content
         ../resources/data.json
         ../resources/views.json
         ../resources/config.json
+        ../resources/colors.json
     RESOURCES
         utils.js
     QML_FILES App.qml

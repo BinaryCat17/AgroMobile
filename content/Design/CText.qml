@@ -9,6 +9,7 @@ Item {
     property int cHAlignment: Text.AlignLeft
     property var cContentWidth: text.contentWidth
     property var cContentHeight: text.contentHeight
+    property color cColor: "black"
 
     Layout.fillWidth: true
     Layout.preferredHeight: text.contentHeight
@@ -21,5 +22,6 @@ Item {
         text: cText
         wrapMode: cWrapMode
         font.family: 'SansProFont'
+        color: root.cColor
     }
 }

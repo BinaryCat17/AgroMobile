@@ -7,6 +7,7 @@ Item {
     property var cAdditionalData
     property var cSetValue
     property var cInputValue
+    property color cTextColor: 'black'
     property string cMode: 'read'
 
     onCSetValueChanged: function() {
@@ -25,5 +26,6 @@ Item {
         padding: 12
         height: 50 * m_ratio
         width: parent.width
+        color: root.cTextColor
     }
 }

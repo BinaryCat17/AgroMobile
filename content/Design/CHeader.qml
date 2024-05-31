@@ -5,6 +5,7 @@ Item {
     id: root
     property string cText: ''
     property var cTextWidth: text.cContentWidth
+    property color cColor: "black"
 
     CText {
         id: text
@@ -12,5 +13,6 @@ Item {
         anchors.centerIn: parent
         cText: root.cText
         cVAlignment: Text.AlignVCenter
+        cColor: root.cColor
     }
 }

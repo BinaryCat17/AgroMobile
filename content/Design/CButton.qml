@@ -8,10 +8,12 @@ Rectangle {
     property bool cSelected: false
     property var cControlItem
     property var cOnClicked
+    property color cIconColor: 'black'
     property color cSelectedColor: '#ffd89d'
     property color cSelectedHoveredColor: cSelectedColor.darker(1.1)
     property color cColor: '#ffffff'
     property color cHoveredColor: cColor.darker(1.1)
+    property color cTextColor: 'black'
     property real cOpenedWidth: 125 * m_ratio
     property real cOpenedMargin: 0
     property bool cHovered: hoverHandler.hovered
@@ -34,11 +36,13 @@ Rectangle {
             id: icon
             height: root.height
             cIcon: root.cIcon
+            cColor: root.cIconColor
         }
 
         CText {
             id: title
             cText: root.cText
+            cColor: root.cTextColor
         }
     }
 

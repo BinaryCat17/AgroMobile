@@ -1,6 +1,7 @@
 import QtQuick 6.2
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Window 2.0
 import agromobile
 
 import "Core"
@@ -8,12 +9,13 @@ import "Design"
 import "Layout"
 
 ApplicationWindow {
-    id: root
+    id: rootWindow
     visible: true
     width: 500
     height: 1000
     visibility: Window.Maximized
     title: "agromobile"
+    color: config.colors('background')
 
     CDatabase {
         id: database
@@ -48,18 +50,18 @@ ApplicationWindow {
 
         CDocSelector {
             id: docSelector
-            width: workspace.cActiveDocument === '' && workspace.cDocumentMode !== 'create' ? 200 * m_ratio : 400 * m_ratio
+            width: workspace.cActiveDocument === '' && workspace.cDocumentMode !== 'create' && cDocumentMode !== 'select' ? 200 * m_ratio : 400 * m_ratio
             height: parent.height
-            cAdditionalData: root.cAdditionalData
+            cAdditionalData: rootWindow.cAdditionalData
         }
 
-        CVSeparator { id: sep; anchors.left: docSelector.right }
+        CVSeparator { id: sep; anchors.left: docSelector.right; color: config.colors('border') }
 
         CViewSelector {
             height: parent.height
             anchors.left: sep.right
             anchors.right: parent.right
-            cAdditionalData: root.cAdditionalData
+            cAdditionalData: rootWindow.cAdditionalData
         }
 
     }
