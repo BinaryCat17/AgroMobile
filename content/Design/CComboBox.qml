@@ -11,6 +11,10 @@ Item {
     property color cTextColor: 'black'
     property color cBorderColor: 'black'
 
+    function select(index) {
+        control.currentIndex = index
+    }
+
     ComboBox {
         id: control
         anchors.fill: parent

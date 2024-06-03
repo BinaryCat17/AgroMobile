@@ -49,7 +49,7 @@ Item {
         headersMainTable.cModel.rows = cHeaderForm.rows.slice(0, numSlice)
         headersCustomTable.cModel.rows = cHeaderForm.rows.slice(numSlice, cHeaderForm.rows.length)
 
-        if (cRecordRows !== undefined && cDocumentMode !== 'create') {
+        if (cRecordsForm !== undefined && cRecordRows !== undefined && cDocumentMode !== 'create') {
             var tableModelCode = `
                 import QtQuick 6.2
                 import Qt.labs.qmlmodels
@@ -130,109 +130,129 @@ Item {
         }
     }
 
-    Item {
+    ScrollView {
         id: rowsTableWrap
         visible: cDocumentMode !== 'create' && cDocumentMode !== ''
         enabled: cDocumentMode !== 'create' && cDocumentMode !== ''
+        width: parent.width
+        height: Math.min(rowsTable.cContentHeight, 500 * m_ratio)
+        anchors.top: headerView.bottom
         anchors.left: parent.left
         anchors.leftMargin: 10 * m_ratio
-        anchors.top: headerView.bottom
         anchors.topMargin: 50 * m_ratio
 
-        CTable {
-            id: rowsTable
-            cColumnWidths: cColumns > 0 ? [50 * m_ratio].concat(Array(cColumns - 1).fill(250 * m_ratio)) : []
-            cItemHeight: 50 * m_ratio
-            width: cContentWidth
-            height: cContentHeight
-            cColor: cConfig.colors('accent')
-            cTextColor: cConfig.colors('primaryText')
-            cBorderColor: cConfig.colors('border')
+        Item {
+            width: rowsTable.cContentWidth + 10 * m_ratio
+            height: parent.height
 
-            cCurrentSelectedMode: 'records'
+            Flickable {
+                id: scroller
+                ScrollBar.vertical: ScrollBar {
+                    width: 10 * m_ratio
+                    policy: ScrollBar.AsNeeded
+                }
 
-            onCContentWidthChanged: rowsTableWrap.width = cContentWidth
-            onCContentHeightChanged: rowsTableWrap.height = cContentHeight
-        }
+                width: parent.width
+                height: parent.height
+                contentHeight: rowsTable.cContentHeight
+                CTable {
+                    id: rowsTable
+                    cColumnWidths: cColumns > 0 ? [50 * m_ratio].concat(Array(cColumns - 1).fill(250 * m_ratio)) : []
+                    cItemHeight: 50 * m_ratio
+                    width: cContentWidth
+                    height: cContentHeight
+                    cColor: cConfig.colors('accent')
+                    cTextColor: cConfig.colors('primaryText')
+                    cBorderColor: cConfig.colors('border')
 
-        ColumnLayout {
-            id: tableOverlay
-            anchors.left: rowsTable.left
-            anchors.top: rowsTable.top
-            anchors.topMargin: 50 * m_ratio
-            spacing: 0
+                    cCurrentSelectedMode: 'records'
+                }
 
-            Repeater {
-                id: tableOverlayRepeater
+                ColumnLayout {
+                    id: tableOverlay
+                    anchors.left: rowsTable.left
+                    anchors.top: rowsTable.top
+                    anchors.topMargin: 50 * m_ratio
+                    spacing: 0
 
-                Item {
-                    width: rowsTable.width
-                    height: 50 * m_ratio
-                    property var cId: modelData[0]
+                    Repeater {
+                        id: tableOverlayRepeater
 
-                    HoverHandler {
-                        id: mouseArea
-                    }
+                        Item {
+                            width: rowsTable.width
+                            height: 50 * m_ratio
+                            property var cId: modelData[0]
 
-                    Rectangle {
-                        id: overlay
-                        visible: rowsTable.cRows > 0
-                        enabled: rowsTable.cRows > 0
-                        height: 50 * m_ratio
-                        width: 50 * m_ratio
-                        opacity: 10
-                        color: mouseArea.hovered ? cConfig.colors('overlay') : 'transparent'
-                    }
-
-                    CButton {
-                        id: delButton
-                        anchors.left: parent.left
-                        anchors.leftMargin: rowsTable.width
-                        visible: cDocumentMode === 'edit' && (mouseArea.hovered || cHovered)
-                        enabled: cDocumentMode === 'edit' && (mouseArea.hovered|| cHovered)
-                        width: 50 * m_ratio
-                        height: 50 * m_ratio
-                        cIcon: 'delete.png'
-                        cColor: cConfig.colors('background')
-                        cIconColor: cConfig.colors('icon')
-
-                        cOnClicked: function() {
-                            var itemCopy = JSON.parse(JSON.stringify(cRecordsForm.rows[index + 1]))
-                            for (var it in itemCopy) {
-                                itemCopy[it].deleted = true
+                            HoverHandler {
+                                id: mouseArea
                             }
-                            cRecordsForm.rows = cRecordsForm.rows.slice(0, index + 1)
-                                .concat([itemCopy], cRecordsForm.rows.slice(index + 2, cRecordsForm.rows.length))
-                        }
-                    }
 
-                    CButton {
-                        id: selectButton
-                        anchors.left: parent.left
-                        anchors.leftMargin: rowsTable.width
-                        visible: cDocumentMode === 'select' && (mouseArea.hovered || cHovered)
-                        enabled: cDocumentMode === 'select' && (mouseArea.hovered|| cHovered)
-                        width: 50 * m_ratio
-                        height: 50 * m_ratio
-                        cIcon: 'select.png'
-                        cColor: cConfig.colors('background')
-                        cIconColor: cConfig.colors('icon')
+                            Rectangle {
+                                id: overlay
+                                visible: rowsTable.cRows > 0
+                                enabled: rowsTable.cRows > 0
+                                height: 50 * m_ratio
+                                width: 50 * m_ratio
+                                opacity: 10
+                                color: mouseArea.hovered ? cConfig.colors('overlay') : 'transparent'
+                            }
 
-                        cOnClicked: function() {
-                            cWorkspace.cCurrentSelectedItem = cRecordsForm.rows[index + 1]
-                            cWorkspace.cSelectDocument = ''
+                            CButton {
+                                id: delButton
+                                anchors.left: parent.left
+                                anchors.leftMargin: rowsTable.width
+                                visible: cDocumentMode === 'edit' && (mouseArea.hovered || cHovered)
+                                enabled: cDocumentMode === 'edit' && (mouseArea.hovered|| cHovered)
+                                width: 50 * m_ratio
+                                height: 50 * m_ratio
+                                cIcon: 'delete.png'
+                                cColor: cConfig.colors('background')
+                                cIconColor: cConfig.colors('icon')
 
-                            if (cWorkspace.cActiveDocument === '') {
-                                cWorkspace.cDocumentMode = 'create'
-                            } else {
-                                cWorkspace.cDocumentMode = 'edit'
+                                cOnClicked: function() {
+                                    var itemCopy = JSON.parse(JSON.stringify(cRecordsForm.rows[index + 1]))
+                                    for (var it in itemCopy) {
+                                        itemCopy[it].deleted = true
+                                    }
+                                    cRecordsForm.rows = cRecordsForm.rows.slice(0, index + 1)
+                                        .concat([itemCopy], cRecordsForm.rows.slice(index + 2, cRecordsForm.rows.length))
+                                }
+                            }
+
+                            CButton {
+                                id: selectButton
+                                anchors.left: parent.left
+                                anchors.leftMargin: rowsTable.width
+                                visible: cDocumentMode === 'select' && (mouseArea.hovered || cHovered)
+                                enabled: cDocumentMode === 'select' && (mouseArea.hovered|| cHovered)
+                                width: 50 * m_ratio
+                                height: 50 * m_ratio
+                                cIcon: 'select.png'
+                                cColor: cConfig.colors('background')
+                                cIconColor: cConfig.colors('icon')
+
+                                cOnClicked: function() {
+                                    cWorkspace.cCurrentSelectedItem = cRecordsForm.rows[index + 1]
+                                    cWorkspace.cSelectDocument = ''
+
+                                    if (cWorkspace.cActiveDocument === '') {
+                                        cWorkspace.cDocumentMode = 'create'
+                                    } else {
+                                        cWorkspace.cDocumentMode = 'edit'
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+
+
         }
+
     }
+
+
 
     Item {
         anchors.top: rowsTableWrap.bottom
@@ -258,7 +278,7 @@ Item {
                 for (var j = 0; j < cRecordRows.length; ++j) {
                     var record = cRecordRows[j]
                     recordRow[record.prop] = {
-                        'created': 'true', 'saved': false, 'type': 'string', 'input':  '', 'mode': 'write'}
+                        'created': 'true', 'saved': false, 'type': record.type, 'input':  '', 'mode': 'write'}
                 }
                 cRecordsForm.rows = cRecordsForm.rows.concat([recordRow])
             }

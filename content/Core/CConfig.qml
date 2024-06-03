@@ -216,8 +216,11 @@ Item {
                 result[item.prop + '_longitude'] = value['longitude']
                 result[item.prop + '_latitude'] = value['latitude']
             } else if (item.type === 'poly') {
-                var shapeLoop = value
-                shapeLoop.push(value.shape[0])
+                var shapeLoop = JSON.parse(value)
+                if (shapeLoop[0] !== shapeLoop[shapeLoop.length - 1]) {
+                    shapeLoop.push(shapeLoop[0])
+                }
+
                 result[item.prop] = JSON.stringify(shapeLoop)
             } else {
                 result[item.prop] = value

@@ -20,7 +20,7 @@ Rectangle {
 
     Component.onCompleted: function() {
         var componentPath = ''
-        if (cType === 'string') {
+        if (cType === 'string' || cType === 'poly') {
             componentPath = 'Forms/CStringForm'
         } else if (cType === 'datetime') {
             componentPath = 'Forms/CStringForm'

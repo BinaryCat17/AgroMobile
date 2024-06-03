@@ -49,8 +49,10 @@ Rectangle {
             updateData(cState)
         }
 
-        if ((cDocumentMode === 'edit' || cDocumentMode === 'create') && cWorkspace.cCurrentSelectedItem !== undefined) {
-            updateSelected()
+        if ((cDocumentMode === 'edit' || cDocumentMode === 'create')) {
+            if(cWorkspace.cCurrentSelectedItem !== undefined) {
+                updateSelected()
+            }
         }
 
         updateLayout()
@@ -62,6 +64,8 @@ Rectangle {
         }
         updateLayout()
     }
+
+    onCViewTypeChanged: updateLayout()
 
     function prepareState() {
         if (!cCoreInitialized) { return false }
@@ -114,15 +118,34 @@ Rectangle {
                 }
             }
         }
-        cWorkspace.cCurrentSelectedItem = undefined
+        //cWorkspace.cCurrentSelectedItem = undefined
         cWorkspace.cCurrentSelectedMode = ''
         cWorkspace.cCurrentSelectedRow = ''
         cWorkspace.cCurrentSelectedColumn = ''
     }
 
+    function updateComboBox() {
+        var model = ['Таблица']
+        if (cState.cRecordRows === undefined) { return }
+        for (var i = 0; i < cState.cRecordRows.length; ++i) {
+            if (cState.cRecordRows[i].prop === 'shape') {
+                model = model.concat(['Карта'])
+                break
+            }
+        }
+        comboBox.cModel = model
+
+        if (cViewType === 'table') {
+            comboBox.select(0)
+        } else if (cViewType === 'map') {
+            comboBox.select(1)
+        }
+    }
+
     function updateLayout() {
         if (cState !== undefined && (cWorkspace.cActiveDocument !== '' || cDocumentMode === 'create' || cDocumentMode === 'select')) {
             view.cActiveView = cViewType
+            updateComboBox()
             view.get(cViewType).cRecordRows = cState.cRecordRows
             view.get(cViewType).cHeaderForm = cState.cHeaderForm
             view.get(cViewType).cRecordsForm = cState.cRecordsForm
@@ -157,7 +180,7 @@ Rectangle {
         view.get(cViewType).cHeaderForm = cState.cHeaderForm
 
         // prepare records -----------------------------------------------------------------------------------------------------------
-        if (cDocumentMode !== 'create' && cDocumentMode !== 'edit') {
+        if (cDocumentMode !== 'create') {
             var recordRow = {}
             recordRow['index'] = { 'saved': true, 'type': 'string', 'input': 'Idx', 'mode': 'read'}
             for (var j = 0; j < cState.cRecordRows.length; ++j) {
@@ -173,7 +196,7 @@ Rectangle {
 
                 for (var f = 0; f < cState.cRecordRows.length; ++f) {
                     var viewRow = cState.cRecordRows[f]
-                    recordRow[viewRow.name] = { 'type': 'string', 'input': cRecordsModel.get(viewRow.prop, l), 'mode': cDocumentMode === 'edit' ? 'write' : 'read'}
+                    recordRow[viewRow.name] = { 'type': viewRow.type, 'input': cRecordsModel.get(viewRow.prop, l), 'mode': cDocumentMode === 'edit' ? 'write' : 'read'}
                 }
                 recordsArr.push(recordRow)
             }
@@ -215,10 +238,11 @@ Rectangle {
         // save records --------------------------------------------------------------------
 
         for (var k = 1; cDocumentMode !== 'create' && k < cState.cRecordsForm.rows.length; ++k) {
-            var row = cState.cRecordsForm.rows[k]
+                var row = cState.cRecordsForm.rows[k]
 
             var savingRow = {}
             var action = ''
+            var isEmpty = false
 
             for (var l = 0; l < cState.cRecordRows.length; ++l) {
                 var record = cState.cRecordRows[l]
@@ -232,6 +256,7 @@ Rectangle {
 
                     if ('deleted' in item && item.deleted) {
                         action = 'delete'
+                        isEmpty = true
                     } else if('created' in item && item.created) {
                         action = 'create'
                     } else if ('saved' in item && item.saved === false) {
@@ -241,14 +266,23 @@ Rectangle {
                 } else {
                     action = ''
                     console.log('Can not save row with empty values')
+                    isEmpty = true
                     break
                 }
+            }
+
+            if (row === cWorkspace.cCurrentSelectedItem && isEmpty) {
+                cWorkspace.cCurrentSelectedItem = undefined
             }
 
             savingRow['doc_id'] = cCurrentDocument
             if (action === 'create') {
                 savingRow['id'] = Utils.generateUUID()
-                cDataManager.createRecord(cCurrentDocumentType, cCurrentDocument, savingRow)
+                if(!cDataManager.createRecord(cCurrentDocumentType, cCurrentDocument, savingRow)) {
+                    if (row === cWorkspace.cCurrentSelectedItem) {
+                        cWorkspace.cCurrentSelectedItem = undefined
+                    }
+                }
             } else if (action === 'update') {
                 savingRow['id'] = row['index'].id
                 cDataManager.updateRecord(cCurrentDocumentType, cCurrentDocument, savingRow)
@@ -259,6 +293,7 @@ Rectangle {
 
         cWorkspace.cActiveDocument = headerValues['id']
         cWorkspace.cDocumentMode = 'view'
+        cWorkspace.cDrawMode = false
     }
 
     Rectangle {
@@ -297,19 +332,21 @@ Rectangle {
             anchors.right: parent.right
 
             CComboBox {
+                id: comboBox
                 enabled: cCurrentDocument !== '' && (cWorkspace.cDocumentMode === 'view')
                 visible: cCurrentDocument !== '' && (cWorkspace.cDocumentMode === 'view')
                 width: 160 * m_ratio
                 height: 50 * m_ratio
                 cColor: cConfig.colors('background')
-                cModel: ['Таблица', 'Карта']
                 cTextColor: cConfig.colors('primaryText')
                 cBorderColor: cConfig.colors('border')
                 cActivated: function(val) {
                     if(val === 'Таблица') {
                         cWorkspace.cViewType = 'table'
+                        view.cActiveView = 'table'
                     } else if(val === 'Карта') {
                         cWorkspace.cViewType = 'map'
+                        view.cActiveView = 'map'
                     }
                 }
             }

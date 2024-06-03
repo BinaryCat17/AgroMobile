@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import '../Core'
 
@@ -127,9 +128,11 @@ Rectangle {
                         cSetValue = JSON.parse(JSON.stringify(display.input))
                     }
 
-                    selector.cCurrentSelectedMode = root.cCurrentSelectedMode
-                    selector.cCurrentSelectedColumn = cCurrentSelectedBaseColumnIndex + column
-                    selector.cCurrentSelectedRow = cCurrentSelectedBaseRowIndex + row
+                    if (root.cCurrentSelectedMode !== '') {
+                        selector.cCurrentSelectedMode = root.cCurrentSelectedMode
+                        selector.cCurrentSelectedColumn = cCurrentSelectedBaseColumnIndex + column
+                        selector.cCurrentSelectedRow = cCurrentSelectedBaseRowIndex + row
+                    }
                 }
 
                 onCInputValueChanged: function() {
@@ -155,6 +158,7 @@ Rectangle {
         }
     }
 
+
     TableView {
         id: tableView
         columnWidthProvider: function (column) {return cColumnWidths[column] }
@@ -165,4 +169,5 @@ Rectangle {
         model: cModel
         delegate: itemDelegate
     }
+
 }

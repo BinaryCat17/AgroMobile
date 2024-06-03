@@ -64,5 +64,4 @@ qt6_add_qml_module(content
         Maps/CMapView.qml
         Maps/CMapInfo.qml
         Maps/CMapLayers.qml
-        Maps/CPolyItem.qml
 )

@@ -29,6 +29,9 @@ Item {
     property var cDocumentViewState: ({})
     property var cSelectViewState: ({})
 
+    property bool cDrawMode
+    property int cTappedPoly: -1
+
     onCConfigInitializedChanged: function() {
         if (!cConfigInitialized) { return }
 

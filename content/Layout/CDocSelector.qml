@@ -75,6 +75,7 @@ Rectangle {
                 } else {
                     cWorkspace.cDocumentMode = 'view'
                 }
+                cWorkspace.cDrawMode = false
             }
         }
 

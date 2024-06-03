@@ -14,35 +14,32 @@ Item {
     property var cAdditionalData
     property var cDataManager: cAdditionalData.dataManager
     property var cWorkspace: cAdditionalData.workspace
+    property var cConfig: cAdditionalData.config
     property bool cCoreInitialized: cAdditionalData.initialized
+    property bool cDrawMode: cWorkspace.cDrawMode
+    property var cDocumentMode: cWorkspace.cDocumentMode
 
     property var cCenter: QtPositioning.coordinate(46.414, 41.362)
     property real cZoomLevel: 14
     property real cMinimumZoomLevel: 2
     property real cMaximumZoomLevel: 16
+    property var cCurrentCoordinate: QtPositioning.coordinate(46.414, 41.362)
+    property var cCurrentSelectedItem: cWorkspace.cCurrentSelectedItem
 
-    CView {
-        id: view
-        anchors.fill: parent
-        cActiveView: 'map'
+    property var cHeaderForm
+    property var cRecordsForm
+    property var cRecordRows
+
+    property int cHoveredPoint: -1
+    property int cTappedPoint: -1
+    property int cTappedPoly: cWorkspace.cTappedPoly
+
+    ListModel {
+        id: unfinishedPoints
     }
 
-    CViewMenu {
-        anchors.fill: parent
-        cAlignment: Qt.AlignRight
-        cComponents: [
-            {name: 'Layers', component: 'Maps/CMapLayers'},
-            //{name: 'Info', component: 'Maps/CMapInfo'}
-        ]
-        cAdditionalData: root.cAdditionalData
-        cInitModel: [
-            //{panel: 'Info', icon: 'info.png'},
-            {panel: 'Layers', icon: 'layer.png'}
-        ]
-    }
-
-    function calcRadius(z) {
-        return z * z * 10000000000 * (1 / (screenSize.width * screenSize.height)) / (Math.exp(z / 1.1) * m_ratio)
+    ListModel {
+        id: viewPolygons
     }
 
     onCCoreInitializedChanged: function() {
@@ -72,90 +69,117 @@ Item {
         }
     }
 
-    // Drawing ----------------------------------------------------------------------------------------------
+    onCDrawModeChanged: function() {
+        cTappedPoint = -1
+        if (cCurrentSelectedItem !== undefined) {
+            if (cDrawMode) {
+                var shape = cCurrentSelectedItem['shape'].input
+                if (shape !== '') {
+                    var ashape = JSON.parse(shape)
+                    for (var j = 0; j < ashape.length; ++j) {
+                        unfinishedPoints.append({
+                            latitude: ashape[j][0],
+                            longitude: ashape[j][1]
+                        })
+                        view.get('map').updateUnfinishedPolygon()
+                    }
+                }
+            } else {
+                if (unfinishedPoints.count > 0) {
+                    var res = '['
+                    for (var i = 0; i < unfinishedPoints.count; ++i) {
+                        var point = unfinishedPoints.get(i)
+                        res += `[${point.latitude}, ${point.longitude}],`
+                    }
+                    res = res.substring(0, res.length - 1) + ']'
+                    cCurrentSelectedItem['shape'].input = res
+                    cRecordsForm.rows[cWorkspace.cTappedPoly] = cCurrentSelectedItem
 
-    // function addGeoItem(item)
-    // {
-    //     var co = Qt.createComponent('/qt/qml/content/'+item+'.qml')
-    //     if (co.status === Component.Ready) {
-    //         map.unfinishedItem = co.createObject(map)
-    //         map.unfinishedItem.addGeometry(hoverHandler.currentCoordinate, false)
-    //         map.addMapItem(map.unfinishedItem)
-    //     } else {
-    //         console.log(item + " is not supported right now, please call us later.")
-    //     }
-    // }
+                    unfinishedPoints.clear()
+                    viewMenu.get('Info').updateLayout()
+                    view.get('map').updateUnfinishedPolygon()
+                    updateLayout()
+                }
+            }
+        }
+    }
 
-    // function finishGeoItem()
-    // {
-    //     map.unfinishedItem.finishAddGeometry()
+    onCDocumentModeChanged: function() {
+        if (cDocumentMode === 'view') {
+            cTappedPoint = -1
+            unfinishedPoints.clear()
+            view.get('map').updateUnfinishedPolygon()
+        }
+    }
 
-    //     if (map.unfinishedItem.geojsonType === 'Point') {
-    //         var point = {
-    //             id: Utils.generateUUID(),
-    //             longitude: map.unfinishedItem.center.longitude,
-    //             latitude: map.unfinishedItem.center.latitude,
-    //             desc: `${map.unfinishedItem.radius}`
-    //         }
+    onCTappedPolyChanged: function() {
+        updateLayout()
+    }
 
-    //         cDataManager.insertItem('Points', point)
-    //     } else if (map.unfinishedItem.geojsonType === 'Polygon') {
-    //         var shape = []
+    function updateLayout() {
+        if (cRecordsForm !== undefined) {
+            cWorkspace.cCurrentSelectedItem = cRecordsForm.rows[cWorkspace.cTappedPoly]
+        }
 
-    //         for (var i in map.unfinishedItem.path) {
-    //             var p = map.unfinishedItem.path[i]
+        viewMenu.get('Info').cRecordRows = root.cRecordRows
+        viewMenu.get('Info').cRecordsForm = root.cRecordsForm
+        viewMenu.get('Info').updateLayout()
 
-    //             shape.push([p.latitude, p.longitude])
-    //         }
+        viewPolygons.clear()
 
-    //         if (i >= 3) {
-    //             var poly = {
-    //                 id: Utils.generateUUID(),
-    //                 shape: shape,
-    //                 desc: `${shape}`
-    //             }
+        if (cRecordsForm !== undefined && cRecordsForm.rows !== undefined) {
+            for (var i = 1; i < cRecordsForm.rows.length; ++i) {
+                var shape = cRecordsForm.rows[i].shape.input
 
-    //             cDataManager.insertItem('Polys', poly)
-    //         }
-    //     }
+                if (shape !== '') {
+                    var color = 'darkviolet'
+                    var bwidth = 2
+                    if ('deleted' in cRecordsForm.rows[i].shape && cRecordsForm.rows[i].shape.deleted) {
+                        color = 'red'
+                        bwidth = 4
+                    } else if (cWorkspace.cTappedPoly === i) {
+                        color = 'coral'
+                        bwidth = 4
+                    }
+                    viewPolygons.append({'shape': shape, 'borderColor': color, 'borderWidth': bwidth})
 
-    //     map.removeMapItem(map.unfinishedItem)
-    //     map.unfinishedItem = undefined
-    // }
+                }
+            }
+        }
+    }
 
-    // Controls  ------------------------------------------------------------------------------------------------------
+    function calcRadius(z) {
+        return z * z * 10000000000 * (1 / (screenSize.width * screenSize.height)) / (Math.exp(z / 1.1) * m_ratio)
+    }
 
-    // HoverHandler {
-    //     id: hoverHandler
-    //     property variant currentCoordinate
-    //     grabPermissions: PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType
+    CView {
+        id: view
+        anchors.fill: parent
+        cActiveView: 'map'
+    }
 
-    //     onPointChanged: {
-    //         currentCoordinate = map.toCoordinate(hoverHandler.point.position)
-    //         if (map.unfinishedItem !== undefined) {
-    //             map.unfinishedItem.addGeometry(map.toCoordinate(hoverHandler.point.position), true)
-    //         }
-    //     }
-    // }
+    CViewMenu {
+        id: viewMenu
+        anchors.margins: 15 * m_ratio
+        anchors.top: parent.top
+        anchors.right: parent.right
+        width: 500 * m_ratio
+        height: 500 * m_ratio
+        cTextColor: cConfig.colors('primaryText')
+        cColor: cConfig.colors('background')
+        cIconColor: cConfig.colors('icon')
 
-    // TapHandler {
-    //     id: tapHandler
-    //     acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-    //     onSingleTapped: (eventPoint, button) => {
-    //         if (button === Qt.RightButton) {
-    //             if (map.unfinishedItem !== undefined) {
-    //                 finishGeoItem()
-    //             }
-    //         } else if (button === Qt.LeftButton) {
-    //             if (map.unfinishedItem !== undefined) {
-    //                 if (map.unfinishedItem.addGeometry(map.toCoordinate(point.position), false)) {
-    //                     finishGeoItem()
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+        cAlignment: Qt.AlignRight
+        cComponents: [
+            {name: 'Layers', component: 'Maps/CMapLayers'},
+            {name: 'Info', component: 'Maps/CMapInfo'}
+        ]
+        cAdditionalData: root.cAdditionalData
+        cInitModel: [
+            {panel: 'Info', icon: 'info.png'},
+            {panel: 'Layers', icon: 'layer.png'}
+        ]
+    }
 
     // Map -----------------------------------------------------------------------------------------------------------------------------
 
@@ -175,6 +199,16 @@ Item {
                 cCenter = center
                 cZoomLevel = zoomLevel
             }
+
+            onZoomLevelChanged: function() {
+                cZoomLevel = zoomLevel
+                br.returnToBounds();
+                if (!pinchAdjustingZoom) resetPinchMinMax()
+            }
+
+            // onCenterChanged: function() {
+            //     cCenter = center
+            // }
 
             onCDataManagerInitializedChanged: function() {
                 if(cDataManager !== undefined && cDataManagerInitialized) {
@@ -205,7 +239,53 @@ Item {
 
             activeMapType: map.supportedMapTypes[map.supportedMapTypes.length - 1]
 
+            function updateUnfinishedPolygon() {
+                unfinishedPolygon.path = []
+                if (unfinishedPoints.count >= 3) {
+                    for (var i = 0; i < unfinishedPoints.count; ++i) {
+                        var point = unfinishedPoints.get(i)
+                        unfinishedPolygon.addCoordinate(point)
+                    }
+                }
+            }
+
             // Controls ------------------------------------------------------------------------------------------------------------
+
+            HoverHandler {
+                id: hoverHandler
+                grabPermissions: PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType
+
+                onPointChanged: {
+                    root.cCurrentCoordinate = map.toCoordinate(hoverHandler.point.position)
+
+                    if (cTappedPoint !== -1) {
+                        unfinishedPoints.set(cTappedPoint, cCurrentCoordinate)
+                        updateUnfinishedPolygon()
+                    }
+                }
+            }
+
+            TapHandler {
+                id: tapHandler
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                onSingleTapped: (eventPoint, button) => {
+                    if (button === Qt.RightButton) {
+
+                    } else if (button === Qt.LeftButton) {
+                        if (cWorkspace.cDrawMode) {
+                            if (cTappedPoint === -1 && cHoveredPoint === -1) {
+                                unfinishedPoints.append({
+                                    latitude: cCurrentCoordinate.latitude,
+                                    longitude: cCurrentCoordinate.longitude
+                                })
+
+                                updateUnfinishedPolygon()
+                            }
+                        }
+                    }
+                }
+            }
 
             tilt: tiltHandler.persistentTranslation.y / -5
             property bool pinchAdjustingZoom: false
@@ -214,11 +294,6 @@ Item {
                 id: br
                 minimum: map.minimumZoomLevel
                 maximum: 16
-            }
-
-            onZoomLevelChanged: {
-                br.returnToBounds();
-                if (!pinchAdjustingZoom) resetPinchMinMax()
             }
 
             function resetPinchMinMax() {
@@ -343,10 +418,24 @@ Item {
 
             // Visualisation --------------------------------------------------------------------------------------------------------
 
-            MapItemView {
-                id: pointsView
+            MapCircle {
+                enabled: cWorkspace.cDrawMode && cHoveredPoint === -1 && cTappedPoint === -1
+                visible: cWorkspace.cDrawMode && cHoveredPoint === -1 && cTappedPoint === -1
+                center: root.cCurrentCoordinate
+                radius: root.calcRadius(root.cZoomLevel, screenSize)
+                color: 'green'
+                border.width: 2
+            }
 
+            MapPolygon {
+                id: unfinishedPolygon
+            }
+
+            MapItemView {
+                id: unifinishedPointsView
+                model: unfinishedPoints
                 z: 1
+
                 delegate: MapCircle {
                     center {
                         latitude: latitude
@@ -359,14 +448,23 @@ Item {
 
                     HoverHandler {
                         id: hhPoint
-                        onHoveredChanged: function(val) {
-                            map.pointHovered = hhPoint.hovered
+                        onHoveredChanged: function() {
+                            if (hhPoint.hovered) {
+                                root.cHoveredPoint = index
+                            } else {
+                                root.cHoveredPoint = -1
+                            }
                         }
                     }
+
                     TapHandler {
                         id: thPoint
                         onTapped: function() {
-                            cDataManager.select('Points', id)
+                            if (index !== cTappedPoint) {
+                                root.cTappedPoint = index
+                            } else {
+                                root.cTappedPoint = -1
+                            }
                         }
                     }
                 }
@@ -374,12 +472,15 @@ Item {
 
             MapItemView {
                 id: polysView
+                model: viewPolygons
                 delegate: MapPolygon {
                     id: polysDelegate
+                    property var cBorderColor: borderColor
+                    property var cBorderWidth: borderWidth
                     enabled: !map.pointHovered
                     color: '#800000FF'
-                    border.width: 2
-                    border.color: hhPolygon.hovered ? "magenta" : Qt.darker(color)
+                    border.width: cBorderWidth
+                    border.color: hhPolygon.hovered ? "magenta" : cBorderColor
 
                     Component.onCompleted: function() {
                         var ashape = JSON.parse(shape)
@@ -393,10 +494,16 @@ Item {
                     HoverHandler {
                         id: hhPolygon
                     }
+
                     TapHandler {
                         id: thPolygon
                         onTapped: function() {
-                            cDataManager.select('Polys', id)
+                            if (!cDrawMode) {
+                                cWorkspace.cTappedPoly = index + 1
+                                cWorkspace.cCurrentSelectedItem = cRecordsForm.rows[index + 1]
+                                viewMenu.cPanel = 'Info'
+                                updateLayout()
+                            }
                         }
                     }
                 }

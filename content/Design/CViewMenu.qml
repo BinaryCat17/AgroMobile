@@ -14,6 +14,11 @@ Item {
     property var cInitModel: [] // example [{icon: 'icon.png', panel: 'panelName'}]
     property var cModel: []
     property int cAlignment: Qt.AlignLeft
+    property var cColor
+    property var cIconColor
+    property var cTextColor
+    property string cHiderState: 'close'
+    property string cPanel
 
     Component.onCompleted: function() {
         cModel = cInitModel
@@ -23,11 +28,23 @@ Item {
         }
     }
 
+    function get(getView) {
+        return view.get(getView)
+    }
+
+    onCPanelChanged: function() {
+        view.cActiveView = cPanel
+        if(view.cActiveView !== '') {
+            cHiderState = 'open'
+        }
+    }
+
     property var cViewWidth: (cViewInitialized && cActiveView !== '') ? view.get(cActiveView).cOpenWidth : 0
     property var cViewHeight: (cViewInitialized && cActiveView !== '') ? view.get(cActiveView).cOpenHeight : 0
 
     CHider {
         id: hider
+        state: cHiderState
         cControlItem: rect
         cOpenWidth: cViewWidth
         cOpenHeight: cViewHeight
@@ -42,12 +59,17 @@ Item {
             RowLayout {
                 id: rowLayout
                 CButton {
+                    width: 50 * m_ratio
+                    height: 50 * m_ratio
+                    cColor: root.cColor
+                    cIconColor: root.cIconColor
+                    cTextColor: root.cTextColor
                     cIcon: hider.state === 'close' ? 'down.png' : 'up.png'
                     cOnClicked: function() {
                         if(hider.state === 'open') {
-                            hider.state = 'close'
+                            cHiderState = 'close'
                         } else if(view.cActiveView !== '') {
-                            hider.state = 'open'
+                            cHiderState = 'open'
                         }
                     }
                 }
@@ -55,16 +77,18 @@ Item {
                 Repeater {
                     model: cModel
                     CButton {
+                        width: 50 * m_ratio
+                        height: 50 * m_ratio
+                        cColor: root.cColor
+                        cIconColor: root.cIconColor
+                        cTextColor: root.cTextColor
                         property var cPanel: modelData.panel
                         property var cView: view
                         property var cHider: hider
 
                         cIcon: modelData.icon
                         cOnClicked: function() {
-                            cView.cActiveView = cPanel
-                            if(cView.cActiveView !== '') {
-                                cHider.state = 'open'
-                            }
+                            root.cPanel = cPanel
                         }
                     }
                 }
