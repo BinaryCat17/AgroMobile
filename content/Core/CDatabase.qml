@@ -48,7 +48,11 @@ Item {
         var joinsString = ''
         if (joins.length > 0) {
             for (var j = 0; j < joins.length; ++j) {
-                joinsString += `INNER JOIN ${table} ON ${table}.${joins[j].column} = ${joins[j].table}.${joins[j].ref_column}`
+                if (!joins[j].alreadyExist) {
+                    joinsString += ` INNER JOIN ${joins[j].table} ON ${table}.${joins[j].column} = ${joins[j].table}.id`
+                }
+
+                propsString += `${joins[j].table}.${joins[j].ref_column} AS ${joins[j].name},`
             }
         }
 
@@ -63,7 +67,6 @@ Item {
             query += filters[filters.length - 1]
         }
 
-        //console.log(query)
         return tx.executeSql(query);
     }
 
@@ -73,7 +76,6 @@ Item {
         listModel.length = 0
         for (var i = 0; i < rs.rows.length; i++) {
             var r = rs.rows.item(i);
-
             var valid = true
             var arr = []
             for (var j in r) {
@@ -141,8 +143,6 @@ Item {
             }
             propsString = propsString.substring(0, propsString.length - 1) + " ";
 
-            // console.log(`UPDATE ${table} SET ${propsString} WHERE id=\"${row.id}\"`)
-            // console.log(JSON.stringify(propValues))
             tx.executeSql(`UPDATE ${table} SET ${propsString} WHERE id=\"${row.id}\"`, propValues);
         }
     }

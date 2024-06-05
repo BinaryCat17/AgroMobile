@@ -130,6 +130,10 @@ Item {
         if (cRecordsForm !== undefined && cRecordsForm.rows !== undefined) {
             for (var i = 1; i < cRecordsForm.rows.length; ++i) {
                 var shape = cRecordsForm.rows[i].shape.input
+                var polyColor = '#800000FF'
+                if ('color' in cRecordsForm.rows[i]) {
+                    polyColor = cRecordsForm.rows[i].color.input
+                }
 
                 if (shape !== '') {
                     var color = 'darkviolet'
@@ -141,7 +145,7 @@ Item {
                         color = 'coral'
                         bwidth = 4
                     }
-                    viewPolygons.append({'shape': shape, 'borderColor': color, 'borderWidth': bwidth})
+                    viewPolygons.append({'shape': shape, 'borderColor': color, 'borderWidth': bwidth, 'polyColor': polyColor})
 
                 }
             }
@@ -475,10 +479,11 @@ Item {
                 model: viewPolygons
                 delegate: MapPolygon {
                     id: polysDelegate
+                    property var cPolyColor: polyColor
                     property var cBorderColor: borderColor
                     property var cBorderWidth: borderWidth
                     enabled: !map.pointHovered
-                    color: '#800000FF'
+                    color: cPolyColor
                     border.width: cBorderWidth
                     border.color: hhPolygon.hovered ? "magenta" : cBorderColor
 

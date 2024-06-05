@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts
+import QtQuick.Controls
 import '../Design'
 
 Item {
@@ -28,25 +29,42 @@ Item {
         }
     }
 
-    CButton {
-        id: text
-        cColor: root.cColor
-        cTextColor: root.cTextColor
-        cIconColor: root.cTextColor
-        cHoveredColor: root.cColor
-        radius: 0
-        state: 'opened'
-        width: parent.width - 100
+    ScrollView {
+        id: textWrap
         height: 50 * m_ratio
-        cIcon: cConfig.getSideMenuProp(cType, 'icon')
-        cText: cInputValue === undefined || cInputValue === '' ? cConfig.getSideMenuProp(cType, 'desc') : cInputValue
+        width: cMode === 'write' ? parent.width - 100 : parent.width
+
+        Item {
+            width: cMode === 'write' ? parent.width - 100 : parent.width
+            height: 50 * m_ratio
+
+            Flickable {
+                contentWidth: text.cContentWidth
+                width: parent.width - 20 * m_ratio
+                height: parent.height
+
+                CButton {
+                    id: text
+                    cColor: root.cColor
+                    cTextColor: root.cTextColor
+                    cIconColor: root.cTextColor
+                    cHoveredColor: root.cColor
+                    radius: 0
+                    state: 'opened'
+                    width: Math.max(cContentWidth, parent.width - 20 * m_ratio)
+                    height: 50 * m_ratio
+                    cIcon: cConfig.getSideMenuProp(cType, 'icon')
+                    cText: cInputValue === undefined || cInputValue === '' ? cConfig.getSideMenuProp(cType, 'desc') : cInputValue
+                }
+            }
+        }
     }
 
     CButton {
         id: select
-        enabled: cWorkspace.cDocumentMode === 'create' || cWorkspace.cDocumentMode === 'edit'
-        visible: cWorkspace.cDocumentMode === 'create' || cWorkspace.cDocumentMode === 'edit'
-        anchors.left: text.right
+        enabled: cMode === 'write' && (cWorkspace.cDocumentMode === 'create' || cWorkspace.cDocumentMode === 'edit')
+        visible: cMode === 'write' && (cWorkspace.cDocumentMode === 'create' || cWorkspace.cDocumentMode === 'edit')
+        anchors.left: textWrap.right
         width: 50 * m_ratio
         height: 50 * m_ratio
         cColor: root.cColor
@@ -65,8 +83,8 @@ Item {
     }
 
     CButton {
-        enabled: cWorkspace.cDocumentMode === 'create' || cWorkspace.cDocumentMode === 'edit'
-        visible: cWorkspace.cDocumentMode === 'create' || cWorkspace.cDocumentMode === 'edit'
+        enabled: cMode === 'write' && (cWorkspace.cDocumentMode === 'create' || cWorkspace.cDocumentMode === 'edit')
+        visible: cMode === 'write' && (cWorkspace.cDocumentMode === 'create' || cWorkspace.cDocumentMode === 'edit')
         anchors.left: select.right
         width: 50 * m_ratio
         height: 50 * m_ratio

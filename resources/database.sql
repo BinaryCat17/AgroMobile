@@ -173,5 +173,6 @@ CREATE TABLE IF NOT EXISTS FieldPlantsRecords (
     doc_id varchar(500) REFERENCES WorkYearsDocuments(id),
     name TEXT,
     region_id varchar(500) REFERENCES RegionsRecords(id),
+    plant_type_id varchar(500) REFERENCES PlantVarietiesRecords(id),
     plant_variety_id varchar(500) REFERENCES PlantVarietiesRecords(id)
 ) ;

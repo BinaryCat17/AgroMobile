@@ -31,8 +31,8 @@ Item {
         for (var j = 0; j < cRecordRows.length; ++j) {
             var record = cRecordRows[j]
             tableRows.push({
-                'prop': { 'prop': record.prop, 'type': 'string', 'input': record.desc, 'mode': 'read'},
-                'value': cCurrentSelectedItem[record.prop]
+                'prop': { 'prop': record.name, 'type': 'string', 'input': record.desc, 'mode': 'read'},
+                'value': cCurrentSelectedItem[record.name]
             })
         }
         table.cModel.rows = tableRows

@@ -17,6 +17,7 @@ Rectangle {
     property real cOpenedWidth: 125 * m_ratio
     property real cOpenedMargin: 0
     property bool cHovered: hoverHandler.hovered
+    property int cContentWidth: title.cContentWidth + 50 * m_ratio
 
     radius: 10
     state: 'closed'

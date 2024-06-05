@@ -57,7 +57,7 @@ Item {
 
             for (var j = 0; j < cRecordRows.length; ++j) {
                 var recordColumn = cRecordRows[j]
-                tableModelCode += `\nTableModelColumn { display: "${recordColumn.prop}" }`
+                tableModelCode += `\nTableModelColumn { display: "${recordColumn.name}" }`
             }
             tableModelCode += '}'
             cTableModel = Qt.createQmlObject(tableModelCode, root, 'dynamicModel')
@@ -157,6 +157,7 @@ Item {
                 contentHeight: rowsTable.cContentHeight
                 CTable {
                     id: rowsTable
+                    cAdditionalData: root.cAdditionalData
                     cColumnWidths: cColumns > 0 ? [50 * m_ratio].concat(Array(cColumns - 1).fill(250 * m_ratio)) : []
                     cItemHeight: 50 * m_ratio
                     width: cContentWidth
@@ -179,7 +180,7 @@ Item {
                         id: tableOverlayRepeater
 
                         Item {
-                            width: rowsTable.width
+                            width: rowsTable.width + 50 * m_ratio
                             height: 50 * m_ratio
                             property var cId: modelData[0]
 
@@ -277,8 +278,8 @@ Item {
 
                 for (var j = 0; j < cRecordRows.length; ++j) {
                     var record = cRecordRows[j]
-                    recordRow[record.prop] = {
-                        'created': 'true', 'saved': false, 'type': record.type, 'input':  '', 'mode': 'write'}
+                    recordRow[record.name] = {
+                        'created': 'true', 'saved': false, 'type': record.type, 'input':  '', 'mode': record.write ? 'write' : 'read'}
                 }
                 cRecordsForm.rows = cRecordsForm.rows.concat([recordRow])
             }

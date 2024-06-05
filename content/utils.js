@@ -126,3 +126,11 @@ function isUpperCase(str) {
     return str !== str.toLowerCase() &&
            str === str.toUpperCase();
 }
+
+function objectKeys(obj) {
+    var res = []
+    for (var i in obj) {
+        res.push(i)
+    }
+    return res
+}

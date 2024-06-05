@@ -80,23 +80,10 @@
         ],
         "records": [
             {"name": "region_name", "view": "name", "select": "region_id", "desc": "Участок", "write": true},
+            {"name": "shape", "view": "shape", "select": "region_id", "write": false, "desc": "Форма"},
             {"name": "plant_type_name", "view": "name", "select": "plant_type_id", "desc": "Культура", "write": true},
+            {"name": "color", "view": "color", "select": "plant_type_id", "write": false, "desc": "Цвет"},
             {"name": "plant_variety_name", "view": "name", "select": "plant_variety_id", "filter": "plant_type_id", "desc": "Сорт", "write": true}
-        ]
-    },
-    {
-        "name": "FieldPlantsMap",
-        "table": "FieldPlants",
-        "headers": [
-            {"view": "name", "desc": "Название", "write": true},
-            {"name": "work_year_name", "view": "name", "select": "work_year_id", "desc": "Рабочий год", "write": true}
-        ],
-        "records": [
-            {"name": "region_name", "view": "name", "select": "region_id", "desc": "Участок", "write": true},
-            {"name": "region_shape", "view": "shape", "select": "region_id", "write": false},
-            {"name": "plant_type_name", "view": "name", "select": "plant_type_id", "desc": "Культура", "write": true},
-            {"name": "plant_variety_name", "view": "name", "select": "plant_variety_id", "filter": "plant_type_id", "desc": "Сорт", "write": true},
-            {"name": "plant_color", "view": "color", "select": "plant_type_id", "write": false}
         ]
     }
 ]

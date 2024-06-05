@@ -109,14 +109,13 @@ Rectangle {
                 }
             }
         } else if (cWorkspace.cCurrentSelectedMode === 'records') {
-            var recordsItem = cState.cRecordsForm[cWorkspace.cCurrentSelectedRow][cRecordsModel.cKeys[cWorkspace.cCurrentSelectedColumn]]
+            var row = cState.cRecordRows[Number.parseInt(cWorkspace.cCurrentSelectedColumn) - 1]
+
+            var recordsItem = cState.cRecordsForm.rows[cWorkspace.cCurrentSelectedRow][row.name]
             recordsItem['id'] = cWorkspace.cCurrentSelectedItem['index'].id
-            for (var j = 0; j < cState.cRecordRows.length; ++j) {
-                if(cState.cRecordRows[i].prop === propName) {
-                    recordsItem['input'] = cWorkspace.cCurrentSelectedItem[cState.cRecordRows[i]['select']['prop']].input
-                    break
-                }
-            }
+            recordsItem['input'] = cWorkspace.cCurrentSelectedItem[row['select']['prop']].input
+            recordsItem['saved'] = false
+
         }
         //cWorkspace.cCurrentSelectedItem = undefined
         cWorkspace.cCurrentSelectedMode = ''
@@ -128,7 +127,7 @@ Rectangle {
         var model = ['Таблица']
         if (cState.cRecordRows === undefined) { return }
         for (var i = 0; i < cState.cRecordRows.length; ++i) {
-            if (cState.cRecordRows[i].prop === 'shape') {
+            if (cState.cRecordRows[i].name === 'shape') {
                 model = model.concat(['Карта'])
                 break
             }
@@ -161,7 +160,7 @@ Rectangle {
         for (var i = 0; i < cState.cHeaders.length; ++i) {
             var header = cState.cHeaders[i]
             if (cDocumentMode !== 'create' || (cDocumentMode === 'create' && header.write)) {
-                headers.push({
+                var prop = {
                     'prop': {
                         'type': 'string',
                         'input': header.desc,
@@ -170,10 +169,12 @@ Rectangle {
                     },
                     'value': {
                         'type': header.type, 'saved': cDocumentMode !== 'create',
-                        'input': cDocumentMode === 'create' ? '' : cHeaderModel.get(header.prop, 0),
-                        'mode': (cDocumentMode === 'create' || cDocumentMode === 'edit') && header.write ? 'write' : 'read'
+                        'input': cDocumentMode === 'create' ? '' : cHeaderModel.get(header.name, 0),
+                        'mode': (cDocumentMode === 'create' || cDocumentMode === 'edit') && header.write ? 'write' : 'read',
+                        'id': cDocumentMode === 'create' ? '' : cHeaderModel.get(header.prop, 0)
                     }
-                })
+                }
+                headers.push(prop)
             }
         }
         cState.cHeaderForm = {'rows': headers}
@@ -196,7 +197,11 @@ Rectangle {
 
                 for (var f = 0; f < cState.cRecordRows.length; ++f) {
                     var viewRow = cState.cRecordRows[f]
-                    recordRow[viewRow.name] = { 'type': viewRow.type, 'input': cRecordsModel.get(viewRow.prop, l), 'mode': cDocumentMode === 'edit' ? 'write' : 'read'}
+                    recordRow[viewRow.name] = {
+                        'type': viewRow.type,
+                        'input': cRecordsModel.get(viewRow.name, l),
+                        'mode': cDocumentMode === 'edit' && viewRow.write ? 'write' : 'read',
+                        'id': cRecordsModel.get(viewRow.prop, l)}
                 }
                 recordsArr.push(recordRow)
             }
@@ -213,15 +218,21 @@ Rectangle {
 
         // получаем значения документов из основной модели
         if (cHeaderModel !== undefined && cHeaderModel !== null) {
-            for (var j = 0; j < cHeaderModel.cKeys.length; ++j) {
-                headerValues[cHeaderModel.cKeys[j]] = cHeaderModel.cData[0][j]
+            var props = cConfig.getDataProps(cConfig.getDataType(cCurrentDocumentType), 'headers')
+
+            for (var j = 0; j < props.length; ++j) {
+                headerValues[cHeaderModel.cKeys[j]] = cHeaderModel.get(props[j].name, 0)
             }
         }
 
         // записываем пользовательские значения
         for (var i = 0; i < cState.cHeaderForm.rows.length; ++i) {
             var obj = cState.cHeaderForm.rows[i]
-            headerValues[obj.prop.name] = obj.value.input
+            if (Utils.isUpperCase(obj.value.type[0])) {
+                headerValues[obj.prop.name] = obj.value.id
+            } else {
+                headerValues[obj.prop.name] = obj.value.input
+            }
         }
 
         if (cDocumentMode === 'create') {
@@ -246,28 +257,32 @@ Rectangle {
 
             for (var l = 0; l < cState.cRecordRows.length; ++l) {
                 var record = cState.cRecordRows[l]
-                var item = row[record.prop]
+                var item = row[record.name]
                 if (!Utils.isWhitespaceString(item.input)) {
-                    if ('id' in item) {
-                        savingRow[record.prop] = item.id
-                    } else {
-                        savingRow[record.prop] = item.input
-                    }
+                    if (!(record.prop in savingRow) || ((record.prop in savingRow) && item.mode === 'write')) {
+                        if (Utils.isUpperCase(item.type[0])) {
+                            savingRow[record.prop] = item.id
+                        } else {
+                            savingRow[record.prop] = item.input
+                        }
 
-                    if ('deleted' in item && item.deleted) {
-                        action = 'delete'
-                        isEmpty = true
-                    } else if('created' in item && item.created) {
-                        action = 'create'
-                    } else if ('saved' in item && item.saved === false) {
-                        action = 'update'
+                        if ('deleted' in item && item.deleted) {
+                            action = 'delete'
+                            isEmpty = true
+                        } else if('created' in item && item.created) {
+                            action = 'create'
+                        } else if('saved' in item && !item.saved) {
+                            action = 'update'
+                        }
                     }
 
                 } else {
                     action = ''
-                    console.log('Can not save row with empty values')
-                    isEmpty = true
-                    break
+                    if (record.write) {
+                        console.log('Can not save row with empty values')
+                        isEmpty = true
+                        break
+                    }
                 }
             }
 

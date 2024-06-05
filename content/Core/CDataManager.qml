@@ -134,7 +134,7 @@ Item {
 
         for (var i = 0; i < viewProps.length; ++i) {
             var propName = ''
-               propName = viewProps[i]['prop']
+            propName = viewProps[i]['name']
             if(keys.indexOf(propName) < 0) {
                 keys.push(propName)
             }
@@ -146,16 +146,25 @@ Item {
         var joins = []
         for (var i = 0; i < viewProps.length; ++i) {
             var prop = viewProps[i]
-            if ('selected' in prop) {
+            if ('select' in prop) {
                 var tableName = ''
 
-                if (prop['selected'].prop_type === 'records') {
-                    tableName = prop['selected'].table + "Records"
-                } else if (prop['selected'].prop_type === 'headers') {
-                    tableName = prop['selected'].table + "Documents"
+                if (prop['select'].prop_type === 'records') {
+                    tableName = prop['select'].table + "Records"
+                } else if (prop['select'].prop_type === 'headers') {
+                    tableName = prop['select'].table + "Documents"
                 }
 
-                joins.push({"table": tableName, "column": prop['prop'], "ref_column": prop['selected'].prop})
+                var alreadyExist = false
+                for (var j = 0; j < joins.length; ++j) {
+                    if (tableName === joins[j].table) {
+                        alreadyExist = true
+                        break
+                    }
+                }
+
+                joins.push({"table": tableName, "column": prop['prop'], "ref_column": prop['select'].prop, "name": prop['name'], "alreadyExist": alreadyExist})
+
             }
         }
         return joins
@@ -200,9 +209,9 @@ Item {
 
                 var filters = []
                 if (cComponentType === 'Headers') {
-                    filters = [cDatabase.filterEq('id', cDocId)]
+                    filters = [cDatabase.filterEq(`${cType + tableType}.id`, cDocId)]
                 } else if (cComponentType === 'Records') {
-                    filters = [cDatabase.filterEq('doc_id', cDocId)]
+                    filters = [cDatabase.filterEq(`${cType + tableType}.doc_id`, cDocId)]
                 }
 
                 cDatabase.transaction(function(tx) {
