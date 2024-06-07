@@ -20,9 +20,32 @@
 -- Base -------------------------------------------------------------------------------------------------------- ;
 
 CREATE TABLE IF NOT EXISTS Organizations (
-    id UUID PRIMARY KEY,
+    id varchar(500) PRIMARY KEY,
     name TEXT
 ) ;
+
+-- CREATE TABLE IF NOT EXISTS Users (
+--     id varchar(500) PRIMARY KEY,
+--     username TEXT,
+--     password_hash varchar(500)
+-- );
+
+-- CREATE TABLE IF NOT EXISTS Sessions (
+--     token varchar(500) PRIMARY KEY,
+--     user_id varchar(500) REFERENCES Users(id)
+-- );
+
+-- CREATE TABLE IF NOT EXISTS Rights (
+--     id varchar(500) PRIMARY KEY,
+--     rightname TEXT
+-- );
+
+-- CREATE TABLE IF NOT EXISTS UserOrganizations (
+--    user_id varchar(500) REFERENCES Users(id),
+--    organization_id varchar(500) REFERENCES Organizations(id),
+--    right_id varchar(500) REFERENCES Rights(id),
+--    PRIMARY KEY (user_id, organization_id)
+-- );
 
 -- Geo --------------------------------------------------------------------------------------------------------- ;
 
@@ -35,12 +58,12 @@ CREATE TABLE IF NOT EXISTS LocationsDocuments (
     name TEXT,
     created_at TEXT,
     updated_at TEXT,
-    organization_id REFERENCES Organizations(id)
+    organization_id varchar(500) REFERENCES Organizations(id)
 ) ;
 
 CREATE TABLE IF NOT EXISTS LocationsRecords (
     id varchar(500) PRIMARY KEY,
-    doc_id varchar(500) REFERENCES PointsDocuments(id),
+    doc_id varchar(500) REFERENCES LocationsDocuments(id),
     name TEXT,
     pos_longitude REAL,
     pos_latitude REAL,
@@ -84,7 +107,7 @@ CREATE TABLE IF NOT EXISTS RegionsDocuments (
     name TEXT,
     created_at TEXT,
     updated_at TEXT,
-    organization_id REFERENCES Organizations(id)
+    organization_id varchar(500) REFERENCES Organizations(id)
 ) ;
 
 CREATE TABLE IF NOT EXISTS RegionsRecords (
@@ -120,7 +143,7 @@ CREATE TABLE IF NOT EXISTS WorkYearsDocuments (
     name TEXT,
     created_at TEXT,
     updated_at TEXT,
-    organization_id REFERENCES Organizations(id)
+    organization_id varchar(500) REFERENCES Organizations(id)
 ) ;
 
 CREATE TABLE IF NOT EXISTS WorkYearsRecords (
@@ -134,12 +157,12 @@ CREATE TABLE IF NOT EXISTS PlantTypesDocuments (
     name TEXT,
     created_at TEXT,
     updated_at TEXT,
-    organization_id REFERENCES Organizations(id)
+    organization_id varchar(500) REFERENCES Organizations(id)
 ) ;
 
 CREATE TABLE IF NOT EXISTS PlantTypesRecords (
     id varchar(500) PRIMARY KEY,
-    doc_id varchar(500) REFERENCES PlantsTypesDocuments(id),
+    doc_id varchar(500) REFERENCES PlantTypesDocuments(id),
     name TEXT,
     color TEXT
 ) ;
@@ -149,8 +172,8 @@ CREATE TABLE IF NOT EXISTS PlantVarietiesDocuments (
     name TEXT,
     created_at TEXT,
     updated_at TEXT,
-    organization_id REFERENCES Organizations(id),
-    plant_type_id UUID REFERENCES PlantTypesRecords(id)
+    organization_id varchar(500) REFERENCES Organizations(id),
+    plant_type_id varchar(500) REFERENCES PlantTypesRecords(id)
 ) ;
 
 CREATE TABLE IF NOT EXISTS PlantVarietiesRecords (
@@ -164,15 +187,15 @@ CREATE TABLE IF NOT EXISTS FieldPlantsDocuments (
     name TEXT,
     created_at TEXT,
     updated_at TEXT,
-    organization_id REFERENCES Organizations(id),
-    work_year_id REFERENCES WorkYearsRecords(id)
+    organization_id varchar(500) REFERENCES Organizations(id),
+    work_year_id varchar(500) REFERENCES WorkYearsRecords(id)
 ) ;
 
 CREATE TABLE IF NOT EXISTS FieldPlantsRecords (
     id varchar(500) PRIMARY KEY,
-    doc_id varchar(500) REFERENCES WorkYearsDocuments(id),
+    doc_id varchar(500) REFERENCES FieldPlantsDocuments(id),
     name TEXT,
     region_id varchar(500) REFERENCES RegionsRecords(id),
-    plant_type_id varchar(500) REFERENCES PlantVarietiesRecords(id),
+    plant_type_id varchar(500) REFERENCES PlantTypesRecords(id),
     plant_variety_id varchar(500) REFERENCES PlantVarietiesRecords(id)
 ) ;
