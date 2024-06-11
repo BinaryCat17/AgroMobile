@@ -2,22 +2,28 @@
     "map_layers": [
         {"name": "tile_servers", "desc": "Карты:", "children": [
             {"name": "scheme", "desc": "схема", "host": "http://92.63.178.4:8080/tile/%z/%x/%y.png"},
-            {"name": "landsat", "desc": "landsat", "host": "http://92.63.178.4:8081/tiles/landsat/%z/%x/%y.png"},
-            {"name": "sentinel-2a", "desc": "sentinel-2a", "host": "http://92.63.178.4:8081/tiles/sentinel-2a/%z/%x/%y.png"}]
-        }
-    ],
+            {"name": "11 апреля", "desc": "11 апреля", "host": "http://92.63.178.4:8081/tiles/11Apr/%z/%x/%y.png"},
+            {"name": "22 апреля", "desc": "22 апреля", "host": "http://92.63.178.4:8081/tiles/22Apr/%z/%x/%y.png"},
+            {"name": "9 мая", "desc": "9 мая", "host": "http://92.63.178.4:8081/tiles/9May/%z/%x/%y.png"},
+            {"name": "24 мая", "desc": "24 мая", "host": "http://92.63.178.4:8081/tiles/24May/%z/%x/%y.png"},
+            {"name": "6 июня", "desc": "6 июня", "host": "http://92.63.178.4:8081/tiles/6Jun/%z/%x/%y.png"}
+    ]}],
     "side_menu": [
-        { "name": "crops", "desc": "Севооборот", "icon": "wheat.png", "children": [
-              { "name": "FieldPlants", "desc": "Посевы", "icon": "fields.png" }
+        { "name": "journals", "desc": "Журналы", "icon": "folder.png", "children": [
+            { "name": "Observations", "desc": "Наблюдения", "icon": "observe.png" }
         ]},
         { "name": "map", "desc": "Карты", "icon": "map.png", "children": [
+            { "name": "FieldPlants", "desc": "Посевы", "icon": "fields.png" },
             { "name": "Regions", "desc": "Участки", "icon": "polygon.png" },
             { "name": "Locations", "desc": "Точки", "icon": "placeholder.png" }
         ]},
         { "name": "catalogs", "desc": "Каталоги", "icon": "catalog.png", "children": [
             { "name": "WorkYears", "desc": "Годы", "icon": "time.png" },
             { "name": "PlantTypes", "desc": "Культуры", "icon": "wheat.png" },
-            { "name": "PlantVarieties", "desc": "Сорта", "icon": "nature.png" }
+            { "name": "PlantVarieties", "desc": "Сорта", "icon": "nature.png" },
+            { "name": "MeasurementUnits", "desc": "Ед. изм.", "icon": "measure.png" },
+            { "name": "ToolTypes", "desc": "Типы", "icon": "catalog.png" },
+            { "name": "ObservationCatalogs", "desc": "Наблюдения", "icon": "observe.png" }
         ]}
     ]
 }

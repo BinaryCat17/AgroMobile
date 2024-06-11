@@ -67,7 +67,6 @@ Item {
             query += filters[filters.length - 1]
         }
 
-        console.log(query)
         return tx.executeSql(query);
     }
 

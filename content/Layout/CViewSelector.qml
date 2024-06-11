@@ -98,19 +98,14 @@ Rectangle {
     }
 
     function updateSelected() {
+        var row = cState.cRecordRows[Number.parseInt(cWorkspace.cCurrentSelectedColumn) - 1]
         if (cWorkspace.cCurrentSelectedMode === 'headers') {
             var headerItem = cState.cHeaderForm.rows[cWorkspace.cCurrentSelectedRow]['value']
             headerItem['id'] = cWorkspace.cCurrentSelectedItem['index'].id
-            var propName = cState.cHeaderForm.rows[cWorkspace.cCurrentSelectedRow]['prop']['name']
-            for (var i = 0; i < cState.cHeaders.length; ++i) {
-                if(cState.cHeaders[i].prop === propName) {
-                    headerItem['input'] = cWorkspace.cCurrentSelectedItem[cState.cHeaders[i]['select']['prop']].input
-                    break
-                }
-            }
-        } else if (cWorkspace.cCurrentSelectedMode === 'records') {
-            var row = cState.cRecordRows[Number.parseInt(cWorkspace.cCurrentSelectedColumn) - 1]
 
+            headerItem['input'] = cWorkspace.cCurrentSelectedItem[row['select']['prop']].input
+
+        } else if (cWorkspace.cCurrentSelectedMode === 'records') {
             var recordsItem = cState.cRecordsForm.rows[cWorkspace.cCurrentSelectedRow][row.name]
             recordsItem['id'] = cWorkspace.cCurrentSelectedItem['index'].id
             recordsItem['input'] = cWorkspace.cCurrentSelectedItem[row['select']['prop']].input

@@ -95,5 +95,69 @@
             {"name": "plant_type_id", "type": "PlantTypes"},
             {"name": "plant_variety_id", "type": "PlantVarieties"}
         ]
+    },
+    {
+        "name": "ToolTypes",
+        "headers": [
+            {"name": "id", "type": "string"},
+            {"name": "name", "type": "string"},
+            {"name": "organization_id", "type": "string"},
+            {"name": "created_at", "type": "datetime"},
+            {"name": "updated_at", "type": "datetime"}
+        ],
+        "records": [
+            {"name": "id", "type": "string"},
+            {"name": "doc_id", "type": "string"},
+            {"name": "name", "type": "string"}
+        ]
+    },
+    {
+        "name": "MeasurementUnits",
+        "headers": [
+            {"name": "id", "type": "string"},
+            {"name": "name", "type": "string"},
+            {"name": "organization_id", "type": "string"},
+            {"name": "created_at", "type": "datetime"},
+            {"name": "updated_at", "type": "datetime"}
+        ],
+        "records": [
+            {"name": "id", "type": "string"},
+            {"name": "doc_id", "type": "string"},
+            {"name": "name", "type": "string"}
+        ]
+    },
+    {
+        "name": "ObservationCatalogs",
+        "headers": [
+            {"name": "id", "type": "string"},
+            {"name": "name", "type": "string"},
+            {"name": "organization_id", "type": "string"},
+            {"name": "created_at", "type": "datetime"},
+            {"name": "updated_at", "type": "datetime"}
+        ],
+        "records": [
+            {"name": "id", "type": "string"},
+            {"name": "doc_id", "type": "string"},
+            {"name": "name", "type": "string"}
+        ]
+    },
+    {
+        "name": "Observations",
+        "headers": [
+            {"name": "id", "type": "string"},
+            {"name": "name", "type": "string"},
+            {"name": "organization_id", "type": "string"},
+            {"name": "created_at", "type": "datetime"},
+            {"name": "updated_at", "type": "datetime"},
+            {"name": "observation_date", "type": "string"}
+        ],
+        "records": [
+            {"name": "id", "type": "string"},
+            {"name": "doc_id", "type": "string"},
+            {"name": "region_id", "type": "Regions"},
+            {"name": "tool_type_id", "type": "ToolTypes"},
+            {"name": "observaton_catalog_id", "type": "ObservationCatalogs"},
+            {"name": "measurement_unit_id", "type": "MeasurementUnits"}
+        ]
     }
 ]

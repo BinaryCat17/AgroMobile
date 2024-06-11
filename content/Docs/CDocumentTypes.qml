@@ -74,7 +74,7 @@ Item {
                             property var cChildIcon: modelData.icon
 
                             state: 'opened'
-                            cOpenedWidth: 140 * m_ratio
+                            cOpenedWidth: 170 * m_ratio
                             cOpenedMargin: 20 * m_ratio
                             visible: false
                             enabled: false

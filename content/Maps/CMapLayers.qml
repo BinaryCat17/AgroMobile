@@ -7,7 +7,7 @@ Item {
     id: root
     anchors.margins: 10 * m_ratio
     property real cOpenWidth: 150 * m_ratio
-    property real cOpenHeight: 45 * calcHeight() * m_ratio
+    property real cOpenHeight: 60 * calcHeight() * m_ratio
     property var cAdditionalData
     property bool cCoreInitialized: cAdditionalData.initialized
     property var cWorkspace: cAdditionalData.workspace

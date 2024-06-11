@@ -85,5 +85,61 @@
             {"name": "color", "view": "color", "select": "plant_type_id", "write": false, "desc": "Цвет"},
             {"name": "plant_variety_name", "view": "name", "select": "plant_variety_id", "filter": "plant_type_id", "desc": "Сорт", "write": true}
         ]
+    },
+    {
+        "name": "ToolTypes",
+        "table": "ToolTypes",
+        "headers": [
+            {"view": "name", "desc": "Название", "write": true},
+            {"view": "organization_id", "desc": "Организация", "write": false},
+            {"view": "created_at", "desc": "Время создания", "write": false},
+            {"view": "updated_at", "desc": "Время обновления", "write": false}
+        ],
+        "records": [
+            {"view": "name", "desc": "Имя", "write": true}
+        ]
+    },
+    {
+        "name": "MeasurementUnits",
+        "table": "MeasurementUnits",
+        "headers": [
+            {"view": "name", "desc": "Название", "write": true},
+            {"view": "organization_id", "desc": "Организация", "write": false},
+            {"view": "created_at", "desc": "Время создания", "write": false},
+            {"view": "updated_at", "desc": "Время обновления", "write": false}
+        ],
+        "records": [
+            {"view": "name", "desc": "Имя", "write": true}
+        ]
+    },
+    {
+        "name": "ObservationCatalogs",
+        "table": "ObservationCatalogs",
+        "headers": [
+            {"view": "name", "desc": "Название", "write": true},
+            {"view": "organization_id", "desc": "Организация", "write": false},
+            {"view": "created_at", "desc": "Время создания", "write": false},
+            {"view": "updated_at", "desc": "Время обновления", "write": false}
+        ],
+        "records": [
+            {"view": "name", "desc": "Имя", "write": true}
+        ]
+    },
+    {
+        "name": "Observations",
+        "table": "Observations",
+        "headers": [
+            {"view": "name", "desc": "Название", "write": true},
+            {"view": "organization_id", "desc": "Организация", "write": false},
+            {"view": "created_at", "desc": "Время создания", "write": false},
+            {"view": "updated_at", "desc": "Время обновления", "write": false},
+            {"view": "observation_date", "desc": "Дата", "write": true}
+        ],
+        "records": [
+            {"name": "region_name", "view": "name", "select": "region_id", "desc": "Участок", "write": true},
+            {"name": "tool_type_name", "view": "name", "select": "tool_type_id", "desc": "Наблюдение", "write": true},
+            {"name": "observation_catalog_name", "view": "name", "select": "observaton_catalog_id", "desc": "Каталог", "write": true},
+            {"name": "measurement_unit_name", "view": "name", "select": "measurement_unit_id", "desc": "Измерение", "write": true}
+        ]
     }
 ]

@@ -344,7 +344,7 @@ Item {
                     const loc = map.toCoordinate(wheel.point.position)
                     switch (event.modifiers) {
                         case Qt.NoModifier:
-                            map.zoomLevel += event.angleDelta.y / 120
+                            map.zoomLevel += event.angleDelta.y / 240
                             break
                         case Qt.ShiftModifier:
                             map.bearing += event.angleDelta.y / 15

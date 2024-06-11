@@ -16,6 +16,8 @@
 -- DROP TABLE IF EXISTS PlantVarietiesRecords ;
 -- DROP TABLE IF EXISTS FieldPlantsDocuments ;
 -- DROP TABLE IF EXISTS FieldPlantsRecords ;
+-- DROP TABLE IF EXISTS ObservationsRecords ;
+-- DROP TABLE IF EXISTS ObservationsDocuments ;
 
 -- Base -------------------------------------------------------------------------------------------------------- ;
 
@@ -198,4 +200,65 @@ CREATE TABLE IF NOT EXISTS FieldPlantsRecords (
     region_id varchar(500) REFERENCES RegionsRecords(id),
     plant_type_id varchar(500) REFERENCES PlantTypesRecords(id),
     plant_variety_id varchar(500) REFERENCES PlantVarietiesRecords(id)
+) ;
+
+CREATE TABLE IF NOT EXISTS ToolTypesDocuments (
+    id varchar(500) PRIMARY KEY,
+    name TEXT,
+    created_at TEXT,
+    updated_at TEXT,
+    organization_id varchar(500) REFERENCES Organizations(id)
+) ;
+
+CREATE TABLE IF NOT EXISTS ToolTypesRecords (
+    id varchar(500) PRIMARY KEY,
+    doc_id varchar(500) REFERENCES ToolTypesDocuments(id),
+    name TEXT
+) ;
+
+CREATE TABLE IF NOT EXISTS MeasurementUnitsDocuments (
+    id varchar(500) PRIMARY KEY,
+    name TEXT,
+    created_at TEXT,
+    updated_at TEXT,
+    organization_id varchar(500) REFERENCES Organizations(id)
+) ;
+
+CREATE TABLE IF NOT EXISTS MeasurementUnitsRecords (
+    id varchar(500) PRIMARY KEY,
+    doc_id varchar(500) REFERENCES MeasurementUnitsDocuments(id),
+    name TEXT
+) ;
+
+CREATE TABLE IF NOT EXISTS ObservationCatalogsDocuments (
+    id varchar(500) PRIMARY KEY,
+    name TEXT,
+    created_at TEXT,
+    updated_at TEXT,
+    organization_id varchar(500) REFERENCES Organizations(id)
+) ;
+
+CREATE TABLE IF NOT EXISTS ObservationCatalogsRecords (
+    id varchar(500) PRIMARY KEY,
+    doc_id varchar(500) REFERENCES ObservationCatalogsDocuments(id),
+    name TEXT
+) ;
+
+CREATE TABLE IF NOT EXISTS ObservationsDocuments (
+    id varchar(500) PRIMARY KEY,
+    name TEXT,
+    created_at TEXT,
+    updated_at TEXT,
+    organization_id varchar(500) REFERENCES Organizations(id),
+    observation_date TEXT
+) ;
+
+CREATE TABLE IF NOT EXISTS ObservationsRecords (
+    id varchar(500) PRIMARY KEY,
+    doc_id varchar(500) REFERENCES ObservationsDocuments(id),
+    name TEXT,
+    region_id varchar(500) REFERENCES RegionsRecords(id),
+    tool_type_id varchar(500) REFERENCES ToolTypesRecords(id),
+    observaton_catalog_id varchar(500) REFERENCES ObservationCatalogsRecords(id),
+    measurement_unit_id varchar(500) REFERENCES MeasurementUnitsRecords(id)
 ) ;
